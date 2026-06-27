@@ -1,0 +1,6 @@
+{
+  "name": "Production Order Management System (POMS)",
+  "description": "A comprehensive web application for managing production orders, tracking manufacturing processes, inventory, shipments, and generating reports in Russian and Uzbek.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
