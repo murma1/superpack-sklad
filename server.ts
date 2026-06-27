@@ -10,7 +10,7 @@ import { DBStore } from './src/db_store';
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
   const db = new DBStore();
 
   app.use(express.json());
