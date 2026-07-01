@@ -14,7 +14,7 @@ interface OrderFormProps {
 }
 
 export default function OrderForm({ order, onClose }: OrderFormProps) {
-  const { products, user, t } = useApp();
+  const { products, user, t, language } = useApp();
 
   const [isAutoNum, setIsAutoNum] = useState(true);
   const [orderNum, setOrderNum] = useState('');
@@ -269,6 +269,22 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
             />
           </div>
 
+          {/* Units Per Pallet */}
+          <div>
+            <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-2">
+              {t.orderForm.unitsPerPalletLabel} *
+            </label>
+            <input
+              type="number"
+              required
+              min={1}
+              value={unitsPerPallet}
+              onChange={(e) => setUnitsPerPallet(e.target.value)}
+              placeholder="360"
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
           {/* Comments / Details */}
           <div>
             <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-2">
@@ -288,7 +304,7 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
             {order && showDeleteConfirm && (
               <div className="bg-rose-950/40 border border-rose-500/30 rounded-xl p-3 flex flex-col gap-2 items-center text-center">
                 <p className="text-[11px] text-rose-300 font-bold">
-                  {useApp().language === 'ru' 
+                  {language === 'ru' 
                     ? `Вы действительно хотите навсегда удалить этот заказ (${order.orderNumber})?` 
                     : `Haqiqatan ham ushbu buyurtmani (${order.orderNumber}) butunlay o'chirib tashlamoqchimisiz?`}
                 </p>
@@ -298,14 +314,14 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
                     onClick={handleDeleteOrder}
                     className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg transition-colors text-xs active:scale-95 cursor-pointer"
                   >
-                    {useApp().language === 'ru' ? 'Да, удалить' : 'Ha, o\'chirish'}
+                    {language === 'ru' ? 'Да, удалить' : 'Ha, o\'chirish'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowDeleteConfirm(false)}
                     className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold rounded-lg transition-colors text-xs cursor-pointer"
                   >
-                    {useApp().language === 'ru' ? 'Отмена' : 'Bekor qilish'}
+                    {language === 'ru' ? 'Отмена' : 'Bekor qilish'}
                   </button>
                 </div>
               </div>
@@ -318,7 +334,7 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
                   onClick={() => setShowDeleteConfirm(true)}
                   className="py-3.5 px-4 bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white font-bold rounded-xl border border-rose-500/20 hover:border-rose-500 transition-colors focus:outline-none active:scale-95 cursor-pointer"
                 >
-                  {useApp().language === 'ru' ? 'Удалить' : 'O\'chirish'}
+                  {language === 'ru' ? 'Удалить' : 'O\'chirish'}
                 </button>
               )}
               <button

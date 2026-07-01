@@ -70,7 +70,11 @@ export default function OrdersModule() {
       setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
-      setSortDir('asc');
+      if (field === 'date' || field === 'createdAt' || field === 'orderNumber') {
+        setSortDir('desc');
+      } else {
+        setSortDir('asc');
+      }
     }
   };
 
@@ -475,7 +479,7 @@ export default function OrdersModule() {
                       </td>
                     </tr>
                   ) : (
-                    filteredOrders.map((order) => {
+                    filteredOrders.map((order, index) => {
                       const prod = products.find(p => p.sku === order.productSku);
                       const percent = getOrderCompletionPercent(order);
                       return (
@@ -531,6 +535,7 @@ export default function OrdersModule() {
                                 onClick={() => setViewHistoryOrder(order)}
                                 title={t.ordersModule.historyTitle}
                                 className="p-1 rounded-lg bg-slate-900/60 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all focus:outline-none"
+                                style={index === 0 ? { backgroundColor: '#d9d2ff' } : undefined}
                               >
                                 <History className="w-3.5 h-3.5" />
                               </button>

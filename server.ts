@@ -31,6 +31,16 @@ async function startServer() {
     }
   });
 
+  // Clear all data
+  app.post('/api/clear-all', (req, res) => {
+    try {
+      db.clearAllData();
+      res.json({ success: true, message: 'Все заказы, склад и товары успешно очищены' });
+    } catch (err: any) {
+      res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
   // Auth: Update language
   app.put('/api/auth/language', (req, res) => {
     const { userId, language } = req.body;
@@ -255,6 +265,20 @@ async function startServer() {
       if (!user) return res.status(400).json({ message: 'User is required' });
       const updatedItem = db.updateInventoryItem(id, updates, user);
       res.json({ success: true, item: updatedItem });
+    } catch (err: any) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  });
+
+  app.delete('/api/inventory/:id', (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = db.deleteInventoryItem(id);
+      if (deleted) {
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ success: false, message: 'Inventory item not found' });
+      }
     } catch (err: any) {
       res.status(400).json({ success: false, message: err.message });
     }

@@ -32,6 +32,7 @@ interface AppContextType {
   toggleTheme: () => void;
   employees: User[];
   refreshEmployees: () => Promise<void>;
+  clearAllData: () => Promise<boolean>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -45,20 +46,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [rawMaterialsCatalog, setRawMaterialsCatalog] = useState<RawMaterialCatalogItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [theme, setThemeState] = useState<'dark' | 'light'>('dark');
+  const [theme, setThemeState] = useState<'dark' | 'light'>('light');
   const [employees, setEmployees] = useState<User[]>([]);
 
-  // Load user and theme from localstorage on mount
+  // Load user from localstorage on mount and enforce light theme
   useEffect(() => {
-    const savedTheme = localStorage.getItem('poms_theme') as 'dark' | 'light';
-    if (savedTheme) {
-      setThemeState(savedTheme);
-      if (savedTheme === 'light') {
-        document.documentElement.classList.add('light');
-      } else {
-        document.documentElement.classList.remove('light');
-      }
-    }
+    // Enforce light theme
+    setThemeState('light');
+    document.documentElement.classList.add('light');
+    localStorage.setItem('poms_theme', 'light');
 
     const savedUser = localStorage.getItem('poms_user');
     if (savedUser) {
@@ -252,14 +248,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setThemeState(nextTheme);
-    localStorage.setItem('poms_theme', nextTheme);
-    if (nextTheme === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
+    setThemeState('light');
+    localStorage.setItem('poms_theme', 'light');
+    document.documentElement.classList.add('light');
+  };
+
+  const clearAllData = async (): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/clear-all', { method: 'POST' });
+      if (res.ok) {
+        await refreshOrders();
+        await refreshProducts();
+        await refreshInventory();
+        await refreshRawMaterialsCatalog();
+        await refreshNotifications();
+        return true;
+      }
+    } catch (e) {
+      console.error('Error clearing data:', e);
     }
+    return false;
   };
 
   const t = translations[language];
@@ -289,7 +297,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       theme,
       toggleTheme,
       employees,
-      refreshEmployees
+      refreshEmployees,
+      clearAllData
     }}>
       {children}
     </AppContext.Provider>

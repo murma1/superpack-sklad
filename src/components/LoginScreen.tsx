@@ -81,7 +81,7 @@ export default function LoginScreen() {
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
             <Layers className="w-7 h-7" />
           </div>
-          <span className="text-2xl font-black text-white tracking-tight uppercase">POMS</span>
+          <span className="text-2xl font-black text-white tracking-tight uppercase">Super Pack</span>
         </div>
         <h2 className="mt-6 text-3xl font-extrabold text-white leading-tight">
           {t.loginTitle}

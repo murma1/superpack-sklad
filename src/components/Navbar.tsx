@@ -7,14 +7,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from './AppContext';
 import { 
   Bell, LogOut, Globe, User as UserIcon, Check, 
-  Trash2, AlertTriangle, CheckCircle, Info, Flame, Sun, Moon
+  Trash2, AlertTriangle, CheckCircle, Info, Flame
 } from 'lucide-react';
 
 export default function Navbar() {
   const { 
     user, logout, language, setLanguage, t, 
     notifications, markAllNotificationsRead, clearNotifications,
-    theme, toggleTheme
+    clearAllData
   } = useApp();
 
   const [notifOpen, setNotifOpen] = useState(false);
@@ -69,11 +69,37 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white shadow shadow-indigo-500/10">
-              <span className="font-extrabold text-lg tracking-wider">P</span>
+            <div className="w-9 h-9 flex items-center justify-center select-none shrink-0 bg-white rounded-xl shadow shadow-indigo-500/10">
+              <svg className="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Globe Continents (Green) */}
+                <path d="M18 42 C12 45, 14 55, 20 62 C26 70, 32 68, 35 60 C38 52, 30 45, 25 45 C20 45, 20 40, 22 35 C24 30, 32 32, 35 28 C38 24, 30 18, 25 22 C20 26, 24 38, 18 42 Z" fill="#10B981" />
+                <path d="M50 18 C55 15, 62 14, 68 18 C74 22, 70 28, 75 32 C80 36, 85 32, 88 38 C91 44, 82 52, 80 58 C78 64, 82 72, 76 76 C70 80, 64 74, 58 78 C52 82, 48 76, 52 70 C56 64, 62 66, 60 58 C58 50, 48 52, 46 44 C44 36, 45 21, 50 18 Z" fill="#10B981" />
+                <path d="M35 70 C30 72, 28 78, 32 82 C36 86, 42 84, 40 76 C38 68, 38 68, 35 70 Z" fill="#10B981" />
+
+                {/* Tree Trunk, Roots and Branches (Dark Navy) */}
+                {/* Roots */}
+                <path d="M50 82 L50 96 M50 90 C45 92, 40 94, 35 97 M50 90 C55 92, 60 94, 65 97 M48 85 C42 88, 38 92, 32 94 M52 85 C58 88, 62 92, 68 94" stroke="#002060" strokeWidth="2.5" strokeLinecap="round" />
+                
+                {/* Trunk */}
+                <path d="M50 62 L50 82" stroke="#002060" strokeWidth="6" strokeLinecap="round" />
+                
+                {/* Main Branches */}
+                <path d="M50 62 C45 55, 38 52, 32 48" stroke="#002060" strokeWidth="4" strokeLinecap="round" />
+                <path d="M50 62 C55 55, 62 52, 68 48" stroke="#002060" strokeWidth="4" strokeLinecap="round" />
+                <path d="M50 54 C50 45, 48 38, 44 32" stroke="#002060" strokeWidth="3" strokeLinecap="round" />
+                <path d="M50 54 C50 45, 52 38, 56 32" stroke="#002060" strokeWidth="3" strokeLinecap="round" />
+
+                {/* Sub branches and finer details */}
+                <path d="M38 51 C34 46, 28 44, 22 42" stroke="#002060" strokeWidth="2" strokeLinecap="round" />
+                <path d="M62 51 C66 46, 72 44, 78 42" stroke="#002060" strokeWidth="2" strokeLinecap="round" />
+                <path d="M47 40 C44 35, 42 30, 38 28" stroke="#002060" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M53 40 C56 35, 58 30, 62 28" stroke="#002060" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M32 48 C28 48, 24 50, 20 52" stroke="#002060" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M68 48 C72 48, 76 50, 80 52" stroke="#002060" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
             </div>
             <div>
-              <div className="font-black text-base tracking-wider leading-none">POMS</div>
+              <div className="font-black text-base tracking-wider leading-none">Super Pack</div>
               <div className="text-[9px] font-medium text-indigo-400 leading-none mt-0.5 tracking-wider uppercase hidden sm:block">
                 {t.appFullName}
               </div>
@@ -82,17 +108,25 @@ export default function Navbar() {
 
           {/* Right menu options */}
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Theme Toggle */}
+            {/* Clear All Data Button */}
             <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex items-center justify-center focus:outline-none cursor-pointer"
-              title={theme === 'dark' ? 'Светлая тема' : 'Темная тема'}
+              onClick={async () => {
+                const confirmClear = window.confirm(
+                  language === 'ru' 
+                    ? 'Вы действительно хотите полностью очистить все заказы, склад и товары?' 
+                    : 'Haqiqatan ham barcha buyurtmalar, ombor va mahsulotlarni tozalashni xohlaysizmi?'
+                );
+                if (confirmClear) {
+                  const success = await clearAllData();
+                  if (success) {
+                    alert(language === 'ru' ? 'Данные успешно очищены!' : 'Ma\'lumotlar muvaffaqiyatli tozalandi!');
+                  }
+                }
+              }}
+              className="p-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-slate-800 transition-colors flex items-center justify-center focus:outline-none cursor-pointer"
+              title={language === 'ru' ? 'Очистить все данные' : 'Barcha ma\'lumotlarni tozalash'}
             >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-amber-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-indigo-400" />
-              )}
+              <Trash2 className="w-5 h-5 text-rose-500 hover:scale-110 transition-transform" />
             </button>
 
             {/* Language Selector */}

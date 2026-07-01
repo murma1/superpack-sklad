@@ -440,6 +440,17 @@ export class DBStore {
     }
   }
 
+  clearAllData() {
+    this.data.orders = [];
+    this.data.inventory = [];
+    this.data.products = [];
+    this.data.transactions = [];
+    this.data.shipments = [];
+    this.data.history = [];
+    this.data.notifications = [];
+    this.save();
+  }
+
   // Auth Operations
   getUsers(): User[] {
     return this.data.users;
@@ -581,6 +592,14 @@ export class DBStore {
     if (updates.defective !== undefined && updates.defective !== original.defective) {
       changes.push(`Брак изменен с ${original.defective} на ${updates.defective}`);
     }
+    if (updates.checkpoints !== undefined) {
+      const origCount = original.checkpoints?.length || 0;
+      const newCount = updates.checkpoints.length;
+      if (newCount > origCount) {
+        const latest = updates.checkpoints[newCount - 1];
+        changes.push(`Добавлен чекпоинт выработки: +${latest.produced} шт (Брак: ${latest.defective} шт)`);
+      }
+    }
     
     const updatedOrder: Order = {
       ...original,
@@ -588,6 +607,10 @@ export class DBStore {
       updatedAt: nowStr,
       updatedBy: user
     };
+
+    if (updatedOrder.status === 'Completed' && updatedOrder.packed === 0 && updatedOrder.produced > 0) {
+      updatedOrder.packed = Math.max(0, updatedOrder.produced - updatedOrder.defective);
+    }
 
     // Adjust raw materials inventory based on usedRawMaterials changes
     if (updates.usedRawMaterials !== undefined) {
@@ -643,11 +666,60 @@ export class DBStore {
         `Производство по заказу ${updatedOrder.orderNumber} завершено! Произведено ${updatedOrder.produced} шт.`,
         `${updatedOrder.orderNumber} buyurtmasi bo'yicha ishlab chiqarish yakunlandi! ${updatedOrder.produced} dona ishlab chiqarildi.`
       );
+    }
 
-      // Automatic finished goods inventory increase when completed/packed
+    // Automatic finished goods inventory updates/corrections
+    if (original.productSku === updatedOrder.productSku) {
       const prod = this.data.products.find(p => p.sku === updatedOrder.productSku);
       const prodName = prod ? prod.name : updatedOrder.productSku;
-      this.adjustInventory(prodName, 'finished_good', updatedOrder.packed, updatedOrder.factory, user, id, `Поступление ГП после завершения заказа ${updatedOrder.orderNumber}`, updatedOrder.productSku);
+      
+      // 1. Transition into Packaging (Production is completed, product is manufactured and goes to packaging)
+      if (original.status !== 'Packaging' && updatedOrder.status === 'Packaging') {
+        const unpackedQty = updatedOrder.produced - updatedOrder.defective;
+        if (unpackedQty > 0) {
+          this.adjustInventory(prodName, 'finished_good', unpackedQty, updatedOrder.factory, user, id, `Поступление не упакованной продукции по заказу ${updatedOrder.orderNumber}`, updatedOrder.productSku, false);
+        }
+      }
+      // 2. Transition OUT of Packaging back to active production or new (reverted)
+      else if (original.status === 'Packaging' && updatedOrder.status !== 'Packaging' && updatedOrder.status !== 'Completed') {
+        const unpackedQty = original.produced - original.defective;
+        if (unpackedQty > 0) {
+          this.adjustInventory(prodName, 'finished_good', -unpackedQty, original.factory, user, id, `Сторнирование не упакованной продукции по заказу ${original.orderNumber} (возврат из упаковки)`, original.productSku, false);
+        }
+      }
+      // 3. Incremental updates while inside Packaging or completing it
+      else if (original.status === 'Packaging' || updatedOrder.status === 'Packaging') {
+        const packDiff = (updatedOrder.packed || 0) - (original.packed || 0);
+        const defectDiff = (updatedOrder.defective || 0) - (original.defective || 0);
+        
+        if (packDiff !== 0 || defectDiff !== 0) {
+          // Deduct the sum of packed and defects from unpacked inventory
+          this.adjustInventory(prodName, 'finished_good', -(packDiff + defectDiff), updatedOrder.factory, user, id, `Упаковка/брак по заказу ${updatedOrder.orderNumber} (упаковано: +${packDiff}, брак: +${defectDiff})`, updatedOrder.productSku, false);
+          
+          // Add packed to packed inventory
+          if (packDiff !== 0) {
+            this.adjustInventory(prodName, 'finished_good', packDiff, updatedOrder.factory, user, id, `Поступление упакованной продукции по заказу ${updatedOrder.orderNumber}`, updatedOrder.productSku, true);
+          }
+        }
+      }
+      // 4. Legacy / Manual direct transition from other statuses directly to Completed/Shipped/Closed
+      else {
+        const isProductionDone = (status: OrderStatus) => status === 'Completed' || status === 'Shipped' || status === 'Closed';
+        const originalDone = isProductionDone(original.status);
+        const newDone = isProductionDone(updatedOrder.status);
+
+        if (!originalDone && newDone) {
+          // Add the packed amount directly to packed inventory
+          this.adjustInventory(prodName, 'finished_good', updatedOrder.packed, updatedOrder.factory, user, id, `Поступление ГП после завершения заказа ${updatedOrder.orderNumber}`, updatedOrder.productSku, true);
+        } else if (originalDone && newDone) {
+          const diff = updatedOrder.packed - original.packed;
+          if (diff !== 0) {
+            this.adjustInventory(prodName, 'finished_good', diff, updatedOrder.factory, user, id, `Корректировка ГП по заказу ${updatedOrder.orderNumber}`, updatedOrder.productSku, true);
+          }
+        } else if (originalDone && !newDone) {
+          this.adjustInventory(prodName, 'finished_good', -original.packed, original.factory, user, id, `Сторнирование ГП по заказу ${updatedOrder.orderNumber} (возврат в производство)`, original.productSku, true);
+        }
+      }
     }
 
     this.save();
@@ -698,7 +770,7 @@ export class DBStore {
     this.updateOrder(order.id, statusUpdate, user);
 
     // Deduct finished goods from warehouse
-    this.adjustInventory(productName, 'finished_good', -shipment.quantity, order.factory, user, order.id, `Отгрузка по накладной ${shipment.waybillNumber}`, shipment.productSku);
+    this.adjustInventory(productName, 'finished_good', -shipment.quantity, order.factory, user, order.id, `Отгрузка по накладной ${shipment.waybillNumber}`, shipment.productSku, true);
 
     // Notification for full shipment
     if (newShipped >= order.quantityOrdered) {
@@ -729,10 +801,81 @@ export class DBStore {
     user: string,
     refId?: string,
     comment?: string,
-    sku?: string
+    sku?: string,
+    isPacked?: boolean
   ) {
+    // Resolve order number if refId is an order ID
+    let orderNumber: string | undefined;
+    if (type === 'finished_good' && refId) {
+      const order = this.data.orders.find(o => o.id === refId);
+      if (order) {
+        orderNumber = order.orderNumber;
+      }
+    }
+
     // Find or create item
-    let item = this.data.inventory.find(i => i.name === itemName && i.factory === factory && i.type === type);
+    let item;
+    if (type === 'finished_good' && sku) {
+      const targetPacked = isPacked !== undefined ? isPacked : true;
+      if (refId) {
+        // 1. Try to find with exact order ID match
+        item = this.data.inventory.find(i => 
+          i.sku === sku && 
+          i.factory === factory && 
+          i.type === type && 
+          !!i.isPacked === targetPacked &&
+          i.orderId === refId
+        );
+        
+        // 2. If not found and we are deducting (qtyChange < 0), let's look for any matching item that has stock
+        if (!item && qtyChange < 0) {
+          item = this.data.inventory.find(i => 
+            i.sku === sku && 
+            i.factory === factory && 
+            i.type === type && 
+            !!i.isPacked === targetPacked &&
+            i.quantity >= Math.abs(qtyChange)
+          );
+        }
+      } else {
+        // If no order ID is specified, look for general items without orderId
+        item = this.data.inventory.find(i => 
+          i.sku === sku && 
+          i.factory === factory && 
+          i.type === type && 
+          !!i.isPacked === targetPacked &&
+          !i.orderId
+        );
+        
+        // If still not found and we are deducting (qtyChange < 0), look for any matching item that has stock
+        if (!item && qtyChange < 0) {
+          item = this.data.inventory.find(i => 
+            i.sku === sku && 
+            i.factory === factory && 
+            i.type === type && 
+            !!i.isPacked === targetPacked &&
+            i.quantity >= Math.abs(qtyChange)
+          );
+        }
+      }
+
+      if (item) {
+        if (item.name !== itemName) {
+          item.name = itemName; // keep name in sync with current product name
+        }
+        // If the item didn't have orderId and orderNumber set, set them now
+        if (!item.orderId && refId) {
+          item.orderId = refId;
+          item.orderNumber = orderNumber;
+        }
+        // Ensure isPacked is explicitly set to targetPacked
+        if (item.isPacked === undefined) {
+          item.isPacked = targetPacked;
+        }
+      }
+    } else {
+      item = this.data.inventory.find(i => i.name === itemName && i.factory === factory && i.type === type);
+    }
     
     if (!item) {
       const id = 'inv-' + Math.random().toString(36).substring(2, 9);
@@ -743,7 +886,10 @@ export class DBStore {
         sku,
         quantity: 0,
         factory,
-        unit: type === 'finished_good' ? 'pcs' : 'pcs' // default unit
+        unit: type === 'finished_good' ? 'pcs' : 'pcs', // default unit
+        isPacked: type === 'finished_good' ? (isPacked !== undefined ? isPacked : true) : undefined,
+        orderId: type === 'finished_good' ? refId : undefined,
+        orderNumber: type === 'finished_good' ? orderNumber : undefined
       };
       this.data.inventory.push(item);
     }
@@ -772,7 +918,8 @@ export class DBStore {
       factory,
       user,
       referenceId: refId,
-      comment
+      comment,
+      isPacked: type === 'finished_good' ? (isPacked !== undefined ? isPacked : true) : undefined
     };
 
     this.data.transactions.push(tx);
@@ -834,6 +981,16 @@ export class DBStore {
 
     this.save();
     return updated;
+  }
+
+  deleteInventoryItem(id: string): boolean {
+    const initialLength = this.data.inventory.length;
+    this.data.inventory = this.data.inventory.filter(item => item.id !== id);
+    if (this.data.inventory.length !== initialLength) {
+      this.save();
+      return true;
+    }
+    return false;
   }
 
   addHistoryEntry(orderId: string, orderNumber: string, user: string, details: string) {

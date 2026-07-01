@@ -1,0 +1,726 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "admin",
+      "name": "Абдуллох Каримов (Admin)",
+      "role": "admin",
+      "language": "ru"
+    },
+    {
+      "id": "u2",
+      "username": "manager",
+      "name": "Дилшод Алиев (Manager)",
+      "role": "manager",
+      "language": "ru"
+    },
+    {
+      "id": "u3",
+      "username": "production",
+      "name": "Тимур Усманов (Production)",
+      "role": "production",
+      "language": "uz"
+    },
+    {
+      "id": "u4",
+      "username": "warehouse",
+      "name": "Сардор Рахимов (Warehouse)",
+      "role": "warehouse",
+      "language": "ru"
+    },
+    {
+      "id": "u5",
+      "username": "supervisor",
+      "name": "Шерзод Хасанов (Director)",
+      "role": "supervisor",
+      "language": "ru"
+    }
+  ],
+  "products": [
+    {
+      "sku": "1",
+      "name": "кнауф",
+      "description": "",
+      "weight": 0,
+      "unitsPerPallet": 0,
+      "isArchived": false,
+      "specification": null,
+      "photos": []
+    }
+  ],
+  "orders": [
+    {
+      "orderNumber": "24",
+      "date": "2026-07-01",
+      "productSku": "1",
+      "quantityOrdered": 1000,
+      "factory": "Keles",
+      "unitsPerPallet": 360,
+      "comment": "",
+      "status": "Completed",
+      "id": "ord-kbod6gw",
+      "produced": 1040,
+      "defective": 0,
+      "packed": 1040,
+      "shipped": 0,
+      "createdAt": "2026-07-01 12:29:23",
+      "createdBy": "Абдуллох Каримов (Admin)",
+      "updatedAt": "2026-07-01 12:30:55",
+      "updatedBy": "Абдуллох Каримов (Admin)",
+      "productionStart": "2026-07-01 07:29",
+      "equipment": "Линия 1",
+      "shift": "day",
+      "checkpoints": [
+        {
+          "id": "cp-lbesa2z",
+          "date": "2026-07-01 07:29",
+          "produced": 1040,
+          "defective": 0,
+          "packed": 0,
+          "equipment": "",
+          "shift": "day",
+          "comment": "",
+          "usedRawMaterials": [],
+          "user": "Абдуллох Каримов (Admin)"
+        }
+      ],
+      "usedRawMaterials": [],
+      "productionEnd": "2026-07-01 07:29"
+    },
+    {
+      "orderNumber": "25",
+      "date": "2026-07-01",
+      "productSku": "1",
+      "quantityOrdered": 4000,
+      "factory": "Keles",
+      "unitsPerPallet": 360,
+      "comment": "",
+      "status": "Completed",
+      "id": "ord-zv206p7",
+      "produced": 4000,
+      "defective": 0,
+      "packed": 4000,
+      "shipped": 0,
+      "createdAt": "2026-07-01 12:32:01",
+      "createdBy": "Абдуллох Каримов (Admin)",
+      "updatedAt": "2026-07-01 12:32:31",
+      "updatedBy": "Абдуллох Каримов (Admin)",
+      "productionStart": "2026-07-01 07:32",
+      "equipment": "Линия 1",
+      "shift": "day",
+      "checkpoints": [
+        {
+          "id": "cp-xojszbc",
+          "date": "2026-07-01 07:32",
+          "produced": 4000,
+          "defective": 0,
+          "packed": 0,
+          "equipment": "",
+          "shift": "day",
+          "comment": "",
+          "usedRawMaterials": [],
+          "user": "Абдуллох Каримов (Admin)"
+        }
+      ],
+      "usedRawMaterials": [],
+      "productionEnd": "2026-07-01 07:32"
+    }
+  ],
+  "inventory": [
+    {
+      "id": "inv-89tcsmd",
+      "name": "кнауф",
+      "type": "finished_good",
+      "sku": "1",
+      "quantity": 0,
+      "factory": "Keles",
+      "unit": "pcs",
+      "isPacked": false,
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24"
+    },
+    {
+      "id": "inv-qzf9rhm",
+      "name": "кнауф",
+      "type": "finished_good",
+      "sku": "1",
+      "quantity": 1040,
+      "factory": "Keles",
+      "unit": "pcs",
+      "isPacked": true,
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24"
+    },
+    {
+      "id": "inv-z206p7x",
+      "name": "кнауф",
+      "type": "finished_good",
+      "sku": "1",
+      "quantity": 4000,
+      "factory": "Keles",
+      "unit": "pcs",
+      "isPacked": true,
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-w4mic0m",
+      "date": "2026-06-29T11:46:22.014Z",
+      "type": "production_inflow",
+      "itemName": "1",
+      "sku": "1",
+      "quantity": 10000,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-t2nu57q",
+      "comment": "Поступление ГП после завершения заказа PO-2026-1503"
+    },
+    {
+      "id": "tx-o93ybst",
+      "date": "2026-07-01T11:52:42.124Z",
+      "type": "production_inflow",
+      "itemName": "1",
+      "sku": "1",
+      "quantity": 49880,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-ife3yue",
+      "comment": "Поступление не упакованной продукции по заказу 23001",
+      "isPacked": false
+    },
+    {
+      "id": "tx-6ae6voh",
+      "date": "2026-07-01T12:00:55.229Z",
+      "type": "shipment_outflow",
+      "itemName": "1",
+      "sku": "1",
+      "quantity": -30120,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-ife3yue",
+      "comment": "Упаковка/брак по заказу 23001 (упаковано: +30120, брак: +0)",
+      "isPacked": false
+    },
+    {
+      "id": "tx-5mgz3h8",
+      "date": "2026-07-01T12:00:55.230Z",
+      "type": "production_inflow",
+      "itemName": "1",
+      "sku": "1",
+      "quantity": 30120,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-ife3yue",
+      "comment": "Поступление упакованной продукции по заказу 23001",
+      "isPacked": true
+    },
+    {
+      "id": "tx-rq0r548",
+      "date": "2026-07-01T12:06:11.015Z",
+      "type": "production_inflow",
+      "itemName": "1",
+      "sku": "1",
+      "quantity": 10000,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-zl9ple6",
+      "comment": "Поступление не упакованной продукции по заказу 23002",
+      "isPacked": false
+    },
+    {
+      "id": "tx-physdtk",
+      "date": "2026-07-01T12:27:31.818Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 10120,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-dtf0nje",
+      "comment": "Поступление не упакованной продукции по заказу 22",
+      "isPacked": false
+    },
+    {
+      "id": "tx-qogt4yq",
+      "date": "2026-07-01T12:28:30.395Z",
+      "type": "shipment_outflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": -10100,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-dtf0nje",
+      "comment": "Упаковка/брак по заказу 22 (упаковано: +10100, брак: +0)",
+      "isPacked": false
+    },
+    {
+      "id": "tx-zsxsm6x",
+      "date": "2026-07-01T12:28:30.395Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 10100,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-dtf0nje",
+      "comment": "Поступление упакованной продукции по заказу 22",
+      "isPacked": true
+    },
+    {
+      "id": "tx-znno2vy",
+      "date": "2026-07-01T12:29:36.630Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 1040,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-kbod6gw",
+      "comment": "Поступление не упакованной продукции по заказу 24",
+      "isPacked": false
+    },
+    {
+      "id": "tx-u2fl9yx",
+      "date": "2026-07-01T12:30:12.383Z",
+      "type": "shipment_outflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": -540,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-kbod6gw",
+      "comment": "Упаковка/брак по заказу 24 (упаковано: +540, брак: +0)",
+      "isPacked": false
+    },
+    {
+      "id": "tx-9earj72",
+      "date": "2026-07-01T12:30:12.384Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 540,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-kbod6gw",
+      "comment": "Поступление упакованной продукции по заказу 24",
+      "isPacked": true
+    },
+    {
+      "id": "tx-v4x81fh",
+      "date": "2026-07-01T12:30:55.939Z",
+      "type": "shipment_outflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": -500,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-kbod6gw",
+      "comment": "Упаковка/брак по заказу 24 (упаковано: +500, брак: +0)",
+      "isPacked": false
+    },
+    {
+      "id": "tx-78n6we1",
+      "date": "2026-07-01T12:30:55.939Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 500,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-kbod6gw",
+      "comment": "Поступление упакованной продукции по заказу 24",
+      "isPacked": true
+    },
+    {
+      "id": "tx-ozeziyh",
+      "date": "2026-07-01T12:32:20.649Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 4000,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-zv206p7",
+      "comment": "Поступление не упакованной продукции по заказу 25",
+      "isPacked": false
+    },
+    {
+      "id": "tx-2vkq394",
+      "date": "2026-07-01T12:32:31.072Z",
+      "type": "shipment_outflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": -4000,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-zv206p7",
+      "comment": "Упаковка/брак по заказу 25 (упаковано: +4000, брак: +0)",
+      "isPacked": false
+    },
+    {
+      "id": "tx-z0ss7kg",
+      "date": "2026-07-01T12:32:31.072Z",
+      "type": "production_inflow",
+      "itemName": "кнауф",
+      "sku": "1",
+      "quantity": 4000,
+      "factory": "Keles",
+      "user": "Абдуллох Каримов (Admin)",
+      "referenceId": "ord-zv206p7",
+      "comment": "Поступление упакованной продукции по заказу 25",
+      "isPacked": true
+    }
+  ],
+  "history": [
+    {
+      "id": "hist-l08ja4x",
+      "orderId": "ord-t2nu57q",
+      "orderNumber": "PO-2026-1503",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-06-29T11:45:39.091Z",
+      "details": "Создан новый заказ PO-2026-1503. Продукт SKU: 1, Кол-во: 10000. Завод: Keles."
+    },
+    {
+      "id": "hist-zgbwp0d",
+      "orderId": "ord-t2nu57q",
+      "orderNumber": "PO-2026-1503",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-06-29T11:46:22.014Z",
+      "details": "Статус изменен с \"New\" на \"Completed\"; Произведено изменено с 0 на 7000; Брак изменен с 0 на 200"
+    },
+    {
+      "id": "hist-8na7abj",
+      "orderId": "ord-t2nu57q",
+      "orderNumber": "PO-2026-1503",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-06-29T11:46:37.827Z",
+      "details": "Упаковано изменено с 0 на 7000"
+    },
+    {
+      "id": "hist-lc2h63m",
+      "orderId": "ord-t2nu57q",
+      "orderNumber": "PO-2026-1503",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-06-29T11:47:01.750Z",
+      "details": "Произведено изменено с 7000 на 10000; Упаковано изменено с 7000 на 10000"
+    },
+    {
+      "id": "hist-qat4iyz",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T11:23:52.890Z",
+      "details": "Создан новый заказ 23001. Продукт SKU: 1, Кол-во: 100000. Завод: Keles."
+    },
+    {
+      "id": "hist-mmsgia3",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T11:24:15.253Z",
+      "details": "Статус изменен с \"New\" на \"InProduction\""
+    },
+    {
+      "id": "hist-rxm43tv",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T11:38:13.741Z",
+      "details": "Произведено изменено с 0 на 20000; Упаковано изменено с 0 на 19880; Брак изменен с 0 на 120; Добавлен чекпоинт выработки: +20000 шт (Брак: 120 шт)"
+    },
+    {
+      "id": "hist-l0tefu4",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T11:52:31.496Z",
+      "details": "Произведено изменено с 20000 на 50000; Добавлен чекпоинт выработки: +30000 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-d4mqjyu",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T11:52:42.123Z",
+      "details": "Статус изменен с \"InProduction\" на \"Packaging\""
+    },
+    {
+      "id": "hist-d68vr62",
+      "orderId": "ord-ife3yue",
+      "orderNumber": "23001",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:00:55.229Z",
+      "details": "Статус изменен с \"Packaging\" на \"Completed\"; Упаковано изменено с 19880 на 50000"
+    },
+    {
+      "id": "hist-939veru",
+      "orderId": "ord-zl9ple6",
+      "orderNumber": "23002",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:05:33.967Z",
+      "details": "Создан новый заказ 23002. Продукт SKU: 1, Кол-во: 10000. Завод: Keles."
+    },
+    {
+      "id": "hist-v56io9l",
+      "orderId": "ord-zl9ple6",
+      "orderNumber": "23002",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:05:49.107Z",
+      "details": "Статус изменен с \"New\" на \"InProduction\""
+    },
+    {
+      "id": "hist-twniamx",
+      "orderId": "ord-zl9ple6",
+      "orderNumber": "23002",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:05:59.222Z",
+      "details": "Произведено изменено с 0 на 8700; Добавлен чекпоинт выработки: +8700 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-99567zl",
+      "orderId": "ord-zl9ple6",
+      "orderNumber": "23002",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:06:08.178Z",
+      "details": "Произведено изменено с 8700 на 10000; Добавлен чекпоинт выработки: +1300 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-1rtcef9",
+      "orderId": "ord-zl9ple6",
+      "orderNumber": "23002",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:06:11.014Z",
+      "details": "Статус изменен с \"InProduction\" на \"Packaging\""
+    },
+    {
+      "id": "hist-c0j0j08",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:26:22.408Z",
+      "details": "Создан новый заказ 22. Продукт SKU: 1, Кол-во: 10000. Завод: Keles."
+    },
+    {
+      "id": "hist-8a3snoh",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:26:28.546Z",
+      "details": "Статус изменен с \"New\" на \"InProduction\""
+    },
+    {
+      "id": "hist-czz5a8r",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:27:25.545Z",
+      "details": "Произведено изменено с 0 на 10120; Добавлен чекпоинт выработки: +10120 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-2072d3e",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:27:31.818Z",
+      "details": "Статус изменен с \"InProduction\" на \"Packaging\""
+    },
+    {
+      "id": "hist-yan15xv",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:28:30.395Z",
+      "details": "Упаковано изменено с 0 на 10100"
+    },
+    {
+      "id": "hist-h3jalbj",
+      "orderId": "ord-dtf0nje",
+      "orderNumber": "22",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:28:35.018Z",
+      "details": "Статус изменен с \"Packaging\" на \"Completed\""
+    },
+    {
+      "id": "hist-rscu15k",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:29:23.189Z",
+      "details": "Создан новый заказ 24. Продукт SKU: 1, Кол-во: 1000. Завод: Keles."
+    },
+    {
+      "id": "hist-3v5pl6i",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:29:27.464Z",
+      "details": "Статус изменен с \"New\" на \"InProduction\""
+    },
+    {
+      "id": "hist-8x8jzet",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:29:35.206Z",
+      "details": "Произведено изменено с 0 на 1040; Добавлен чекпоинт выработки: +1040 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-d2ckf0h",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:29:36.630Z",
+      "details": "Статус изменен с \"InProduction\" на \"Packaging\""
+    },
+    {
+      "id": "hist-f9ifdd9",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:30:12.383Z",
+      "details": "Упаковано изменено с 0 на 540"
+    },
+    {
+      "id": "hist-hqxfucc",
+      "orderId": "ord-kbod6gw",
+      "orderNumber": "24",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:30:55.939Z",
+      "details": "Статус изменен с \"Packaging\" на \"Completed\"; Упаковано изменено с 540 на 1040"
+    },
+    {
+      "id": "hist-v1se46z",
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:32:01.787Z",
+      "details": "Создан новый заказ 25. Продукт SKU: 1, Кол-во: 4000. Завод: Keles."
+    },
+    {
+      "id": "hist-7fhajfl",
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:32:06.700Z",
+      "details": "Статус изменен с \"New\" на \"InProduction\""
+    },
+    {
+      "id": "hist-cj9lvq1",
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:32:18.649Z",
+      "details": "Произведено изменено с 0 на 4000; Добавлен чекпоинт выработки: +4000 шт (Брак: 0 шт)"
+    },
+    {
+      "id": "hist-yt2i61s",
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:32:20.649Z",
+      "details": "Статус изменен с \"InProduction\" на \"Packaging\""
+    },
+    {
+      "id": "hist-v1vtypm",
+      "orderId": "ord-zv206p7",
+      "orderNumber": "25",
+      "user": "Абдуллох Каримов (Admin)",
+      "timestamp": "2026-07-01T12:32:31.072Z",
+      "details": "Статус изменен с \"Packaging\" на \"Completed\"; Упаковано изменено с 0 на 4000"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-6qoyk7f",
+      "timestamp": "2026-07-01T12:32:01.787Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка 25 на завод Келес.",
+      "messageUz": "Keles zavodida yangi 25 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-e7l7oaj",
+      "timestamp": "2026-07-01T12:30:55.939Z",
+      "type": "success",
+      "messageRu": "Производство по заказу 24 завершено! Произведено 1040 шт.",
+      "messageUz": "24 buyurtmasi bo'yicha ishlab chiqarish yakunlandi! 1040 dona ishlab chiqarildi.",
+      "read": false
+    },
+    {
+      "id": "notif-8xaiq3q",
+      "timestamp": "2026-07-01T12:29:23.189Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка 24 на завод Келес.",
+      "messageUz": "Keles zavodida yangi 24 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-qjbyhdp",
+      "timestamp": "2026-07-01T12:28:35.018Z",
+      "type": "success",
+      "messageRu": "Производство по заказу 22 завершено! Произведено 10120 шт.",
+      "messageUz": "22 buyurtmasi bo'yicha ishlab chiqarish yakunlandi! 10120 dona ishlab chiqarildi.",
+      "read": false
+    },
+    {
+      "id": "notif-w9hqcmw",
+      "timestamp": "2026-07-01T12:26:22.408Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка 22 на завод Келес.",
+      "messageUz": "Keles zavodida yangi 22 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-ko5d6i9",
+      "timestamp": "2026-07-01T12:05:33.967Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка 23002 на завод Келес.",
+      "messageUz": "Keles zavodida yangi 23002 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-pgsorf8",
+      "timestamp": "2026-07-01T12:00:55.229Z",
+      "type": "success",
+      "messageRu": "Производство по заказу 23001 завершено! Произведено 50000 шт.",
+      "messageUz": "23001 buyurtmasi bo'yicha ishlab chiqarish yakunlandi! 50000 dona ishlab chiqarildi.",
+      "read": false
+    },
+    {
+      "id": "notif-m3r23nv",
+      "timestamp": "2026-07-01T11:23:52.890Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка 23001 на завод Келес.",
+      "messageUz": "Keles zavodida yangi 23001 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-6fgf87a",
+      "timestamp": "2026-06-29T11:46:22.014Z",
+      "type": "success",
+      "messageRu": "Производство по заказу PO-2026-1503 завершено! Произведено 7000 шт.",
+      "messageUz": "PO-2026-1503 buyurtmasi bo'yicha ishlab chiqarish yakunlandi! 7000 dona ishlab chiqarildi.",
+      "read": false
+    },
+    {
+      "id": "notif-bspuffk",
+      "timestamp": "2026-06-29T11:45:39.091Z",
+      "type": "info",
+      "messageRu": "Создана новая заявка PO-2026-1503 на завод Келес.",
+      "messageUz": "Keles zavodida yangi PO-2026-1503 buyurtmasi yaratildi.",
+      "read": false
+    },
+    {
+      "id": "notif-qkf0zi6",
+      "timestamp": "2026-07-01T12:32:31.072Z",
+      "type": "success",
+      "messageRu": "Производство по заказу 25 завершено! Произведено 4000 шт.",
+      "messageUz": "25 buyurtmasi bo'yicha ishlab chiqarish yakunlandi! 4000 dona ishlab chiqarildi.",
+      "read": false
+    }
+  ],
+  "shipments": [],
+  "rawMaterialsCatalog": []
+}

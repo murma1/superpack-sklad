@@ -132,22 +132,37 @@ export default function ReportsModule() {
     // 1. Create workbook
     const wb = XLSX.utils.book_new();
 
+    const periodNamesRu = {
+      today: 'Сегодня',
+      week: 'Неделя',
+      month: 'Месяц',
+      custom: 'Выборочный период'
+    };
+
+    const statusNamesRu: { [key: string]: string } = {
+      New: 'Новый',
+      InProduction: 'В производстве',
+      Completed: 'Завершено',
+      Shipped: 'Отгружен',
+      Closed: 'Закрыт'
+    };
+
     // 2. Statistics Sheet
     const statsData = [
-      ['POMS - Production Order Management System (POMS)'],
-      [`Период отчета (Period): ${period.toUpperCase()}`],
-      [`Дата выгрузки (Export Date): ${new Date().toLocaleDateString()}`],
+      ['Super Pack - Система управления производственными заказами'],
+      [`Период отчета: ${periodNamesRu[period] || period}`],
+      [`Дата выгрузки: ${new Date().toLocaleDateString()}`],
       [],
-      ['ПОКАЗАТЕЛЬ (Metric)', 'ЗНАЧЕНИЕ (Value)'],
-      ['Всего заказов (Total Orders)', orders.length],
-      ['В производстве (In Production)', orders.filter(o => o.status === 'InProduction').length],
-      ['Завершено (Completed)', orders.filter(o => o.status === 'Completed').length],
-      ['Всего выработки (Total Production Qty)', orders.reduce((s, o) => s + o.produced, 0)],
-      ['Всего брака (Total Defects Qty)', orders.reduce((s, o) => s + o.defective, 0)],
-      ['Всего отгружено (Total Shipped Qty)', orders.reduce((s, o) => s + o.shipped, 0)],
+      ['Показатель', 'Значение'],
+      ['Всего заказов', orders.length],
+      ['В производстве', orders.filter(o => o.status === 'InProduction').length],
+      ['Завершено', orders.filter(o => o.status === 'Completed').length],
+      ['Всего выработки', orders.reduce((s, o) => s + o.produced, 0)],
+      ['Всего брака', orders.reduce((s, o) => s + o.defective, 0)],
+      ['Всего отгружено', orders.reduce((s, o) => s + o.shipped, 0)],
     ];
     const wsStats = XLSX.utils.aoa_to_sheet(statsData);
-    XLSX.utils.book_append_sheet(wb, wsStats, 'Статистика (Stats)');
+    XLSX.utils.book_append_sheet(wb, wsStats, 'Статистика');
 
     // 3. Orders Sheet
     const ordersHeaders = ['Номер заказа', 'Дата', 'SKU Продукта', 'Завод', 'Заказано, шт', 'Произведено, шт', 'Брак, шт', 'Упаковано, шт', 'Отгружено, шт', 'Статус', 'Выполнение %'];
@@ -163,24 +178,24 @@ export default function ReportsModule() {
         o.defective,
         o.packed,
         o.shipped,
-        t.statuses[o.status] || o.status,
+        statusNamesRu[o.status] || o.status,
         `${percent}%`
       ];
     });
     const wsOrders = XLSX.utils.aoa_to_sheet([ordersHeaders, ...ordersRows]);
-    XLSX.utils.book_append_sheet(wb, wsOrders, 'Заказы (Orders)');
+    XLSX.utils.book_append_sheet(wb, wsOrders, 'Заказы');
 
     // 4. Warehouse Sheet
     const invHeaders = ['Наименование', 'Тип', 'Завод', 'Остаток', 'Ед. изм.'];
     const invRows = inventory.map(i => [
       i.name,
-      i.type === 'raw_material' ? 'Сырье (Raw)' : 'Готовая продукция (FG)',
+      i.type === 'raw_material' ? 'Сырье' : 'Готовая продукция',
       i.factory === 'Keles' ? 'Келес' : 'Юнусобод',
       i.quantity,
       i.unit
     ]);
     const wsInv = XLSX.utils.aoa_to_sheet([invHeaders, ...invRows]);
-    XLSX.utils.book_append_sheet(wb, wsInv, 'Склад (Warehouse)');
+    XLSX.utils.book_append_sheet(wb, wsInv, 'Склад');
 
     // 5. Shipments Sheet
     const shipHeaders = ['Дата', 'ТТН Заказа', 'Продукт SKU', 'Накладная №', 'Машина', 'Получатель', 'Кол-во шт'];
@@ -194,10 +209,10 @@ export default function ReportsModule() {
       s.quantity
     ]);
     const wsShip = XLSX.utils.aoa_to_sheet([shipHeaders, ...shipRows]);
-    XLSX.utils.book_append_sheet(wb, wsShip, 'Отгрузки (Shipments)');
+    XLSX.utils.book_append_sheet(wb, wsShip, 'Отгрузки');
 
     // 6. Write and save
-    XLSX.writeFile(wb, `POMS_Report_${period}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.writeFile(wb, `Super_Pack_Otchet_${period}_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const handlePrintPdf = () => {
@@ -241,7 +256,13 @@ export default function ReportsModule() {
             <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-black">{t.reportsModule.period}</label>
             <select
               value={period}
-              onChange={(e: any) => setPeriod(e.target.value)}
+              onChange={(e: any) => {
+                const val = e.target.value;
+                setPeriod(val);
+                if (val === 'custom') {
+                  setShowCalendar(true);
+                }
+              }}
               className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-xs font-semibold text-white focus:outline-none"
             >
               <option value="today">{t.reportsModule.periods.today}</option>
@@ -274,21 +295,29 @@ export default function ReportsModule() {
             <div className="grid grid-cols-2 gap-3 md:col-span-2 lg:col-span-1">
               <div>
                 <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-black">Дата начала</label>
-                <input
-                  type="date"
-                  value={dateStart}
-                  onChange={(e) => setDateStart(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
-                />
+                <div className="relative">
+                  <input
+                    type="date"
+                    value={dateStart}
+                    onChange={(e) => setDateStart(e.target.value)}
+                    onFocus={() => setShowCalendar(true)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 pl-3 pr-10 text-xs text-white focus:border-indigo-500 transition-colors"
+                  />
+                  <Calendar className="w-4 h-4 text-indigo-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
               </div>
               <div>
                 <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-black">Дата окончания</label>
-                <input
-                  type="date"
-                  value={dateEnd}
-                  onChange={(e) => setDateEnd(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
-                />
+                <div className="relative">
+                  <input
+                    type="date"
+                    value={dateEnd}
+                    onChange={(e) => setDateEnd(e.target.value)}
+                    onFocus={() => setShowCalendar(true)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 pl-3 pr-10 text-xs text-white focus:border-indigo-500 transition-colors"
+                  />
+                  <Calendar className="w-4 h-4 text-indigo-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
               </div>
             </div>
           )}
@@ -330,8 +359,8 @@ export default function ReportsModule() {
       {/* PRINT BANNER LOGO */}
       <div className="hidden print:flex items-center justify-between border-b-4 border-slate-900 pb-5 mb-8 text-slate-900">
         <div>
-          <h1 className="text-3xl font-black uppercase tracking-tight">POMS REPORT</h1>
-          <p className="text-xs font-semibold text-slate-600 mt-1">Production Order Management System</p>
+          <h1 className="text-3xl font-black uppercase tracking-tight">SUPER PACK REPORT</h1>
+          <p className="text-xs font-semibold text-slate-600 mt-1">Super Pack System</p>
           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">EXPORT DATE: {new Date().toLocaleString()}</span>
         </div>
         <div className="text-right text-xs font-bold">

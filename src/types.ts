@@ -29,7 +29,20 @@ export interface Product {
   photos?: string[]; // array of base64 image strings
 }
 
-export type OrderStatus = 'New' | 'InProduction' | 'Completed' | 'Shipped' | 'Closed';
+export type OrderStatus = 'New' | 'InProduction' | 'Packaging' | 'Completed' | 'Shipped' | 'Closed';
+
+export interface ProductionCheckpoint {
+  id: string;
+  date: string; // YYYY-MM-DD HH:MM
+  produced: number;
+  defective: number;
+  packed: number;
+  equipment?: string;
+  shift?: string;
+  comment?: string;
+  usedRawMaterials?: { id: string; name: string; quantity: number; unit: string }[];
+  user: string;
+}
 
 export interface Order {
   id: string;
@@ -41,6 +54,7 @@ export interface Order {
   unitsPerPallet: number;
   comment: string;
   status: OrderStatus;
+  checkpoints?: ProductionCheckpoint[];
   
   // Production stats
   produced: number;
@@ -72,6 +86,9 @@ export interface InventoryItem {
   minThreshold?: number; // low-stock trigger limit (only for raw materials)
   factory: 'Keles' | 'Yunusobod';
   unit: string; // kg, pcs, rolls, etc.
+  isPacked?: boolean; // true = Packed, false = Unpacked
+  orderId?: string;
+  orderNumber?: string;
 }
 
 export interface InventoryTransaction {
@@ -85,6 +102,7 @@ export interface InventoryTransaction {
   user: string;
   referenceId?: string; // references orderId or shipmentId
   comment?: string;
+  isPacked?: boolean;
 }
 
 export interface Shipment {

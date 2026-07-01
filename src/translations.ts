@@ -6,9 +6,9 @@
 export const translations = {
   ru: {
     // Auth & Layout
-    appName: 'Производственная система POMS',
-    appFullName: 'Production Order Management System',
-    loginTitle: 'Вход в систему POMS',
+    appName: 'Производственная система Super Pack',
+    appFullName: 'Super Pack',
+    loginTitle: 'Вход в систему Super Pack',
     loginSubtitle: 'Управление заказами и складом готовой продукции',
     username: 'Имя пользователя',
     password: 'Пароль',
@@ -41,6 +41,7 @@ export const translations = {
       dashboard: 'Дашборд',
       orders: 'Заявки / Заказы',
       production: 'Производство',
+      packaging: 'Упаковка',
       warehouse: 'Складской учет',
       shipments: 'Отгрузки',
       reports: 'Отчеты',
@@ -280,9 +281,9 @@ export const translations = {
   },
   uz: {
     // Auth & Layout
-    appName: 'POMS Ishlab Chiqarish Tizimi',
-    appFullName: 'Production Order Management System',
-    loginTitle: 'POMS Tizimiga Kirish',
+    appName: 'Super Pack Ishlab Chiqarish Tizimi',
+    appFullName: 'Super Pack',
+    loginTitle: 'Super Pack Tizimiga Kirish',
     loginSubtitle: 'Buyurtmalar va tayyor mahsulotlar omborini boshqarish',
     username: 'Foydalanuvchi nomi',
     password: 'Parol',
@@ -315,6 +316,7 @@ export const translations = {
       dashboard: 'Boshqaruv paneli',
       orders: 'Buyurtmalar',
       production: 'Ishlab chiqarish',
+      packaging: 'Qadoqlash',
       warehouse: 'Ombor hisobi',
       shipments: 'Yuklab jo\'natish',
       reports: 'Hisobotlar',

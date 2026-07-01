@@ -19,10 +19,12 @@ export default function WarehouseModule() {
     language, 
     refreshInventory, 
     rawMaterialsCatalog, 
-    refreshRawMaterialsCatalog 
+    refreshRawMaterialsCatalog,
+    orders
   } = useApp();
 
   const [activeSubTab, setActiveSubTab] = useState<'raw' | 'finished' | 'catalog' | 'transactions'>('raw');
+  const [fgGrouping, setFgGrouping] = useState<'detailed' | 'sku'>('detailed');
   const [transactions, setTransactions] = useState<InventoryTransaction[]>([]);
   const [search, setSearch] = useState('');
   const [filterFactory, setFilterFactory] = useState<string>('all');
@@ -43,6 +45,8 @@ export default function WarehouseModule() {
   const [newCatMinThreshold, setNewCatMinThreshold] = useState('');
   const [catalogError, setCatalogError] = useState('');
   const [catalogDeleteConfirmId, setCatalogDeleteConfirmId] = useState<string | null>(null);
+  const [rawDeleteConfirmId, setRawDeleteConfirmId] = useState<string | null>(null);
+  const [fgDeleteConfirmId, setFgDeleteConfirmId] = useState<string | null>(null);
 
   // Edit stock modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -238,18 +242,55 @@ export default function WarehouseModule() {
   // Finished goods list with filters
   const finishedGoods = inventory.filter(i => {
     if (i.type !== 'finished_good') return false;
+    if (i.quantity <= 0) return false;
     if (!i.name.toLowerCase().includes(search.toLowerCase())) return false;
     
     // Factory filter
     if (filterFactory !== 'all' && i.factory !== filterFactory) return false;
     
-    // Status/State filter (finished goods do not have minThreshold, so they are always "ok")
+    // Status/State filter
     if (filterStatus !== 'all') {
-      if (filterStatus === 'low') return false; // none of finished goods are low status since no minThreshold is set
+      if (filterStatus === 'packed' && i.isPacked === false) return false;
+      if (filterStatus === 'unpacked' && i.isPacked !== false) return false;
     }
     
     return true;
   });
+
+  // Processed finished goods based on grouping setting
+  const processedFinishedGoods = React.useMemo(() => {
+    if (fgGrouping === 'detailed') {
+      return finishedGoods;
+    }
+    // Group by SKU + factory + isPacked status
+    const groups: { [key: string]: InventoryItem } = {};
+    finishedGoods.forEach(item => {
+      const isPackedKey = item.isPacked === false ? 'unpacked' : 'packed';
+      const key = `${item.sku}_${item.factory}_${isPackedKey}`;
+      if (!groups[key]) {
+        groups[key] = {
+          ...item,
+          id: `grouped-${key}`,
+          quantity: 0,
+          orderId: undefined,
+          orderNumber: undefined
+        };
+      }
+      groups[key].quantity += item.quantity;
+    });
+    return Object.values(groups);
+  }, [finishedGoods, fgGrouping]);
+
+  const getOrderNumber = (item: InventoryItem) => {
+    if (item.orderNumber) return item.orderNumber;
+    if (item.orderId) {
+      const o = orders.find(ord => ord.id === item.orderId);
+      if (o) return o.orderNumber;
+    }
+    // Fallback to match order by SKU & factory
+    const matched = orders.find(ord => ord.productSku === item.sku && ord.factory === item.factory);
+    return matched ? matched.orderNumber : '—';
+  };
 
   return (
     <div className="space-y-6 font-sans select-none">
@@ -341,14 +382,45 @@ export default function WarehouseModule() {
                 <option value="all">
                   {language === 'ru' ? 'Все состояния' : 'Barcha holatlar'}
                 </option>
-                <option value="low">
-                  {language === 'ru' ? 'Низкий остаток' : "Qoldiq kam"}
-                </option>
-                <option value="ok">
-                  {language === 'ru' ? 'В норме' : "Me'yorda"}
-                </option>
+                {activeSubTab === 'raw' ? (
+                  <>
+                    <option value="low">
+                      {language === 'ru' ? 'Низкий остаток' : "Qoldiq kam"}
+                    </option>
+                    <option value="ok">
+                      {language === 'ru' ? 'В норме' : "Me'yorda"}
+                    </option>
+                  </>
+                ) : (
+                  <>
+                    <option value="packed">
+                      {language === 'ru' ? 'Упакован' : "Qadoqlangan"}
+                    </option>
+                    <option value="unpacked">
+                      {language === 'ru' ? 'Не упакован' : "Qadoqlanmagan"}
+                    </option>
+                  </>
+                )}
               </select>
             </div>
+
+            {/* Grouping Filter */}
+            {activeSubTab === 'finished' && (
+              <div className="flex-1 md:w-48">
+                <select
+                  value={fgGrouping}
+                  onChange={(e) => setFgGrouping(e.target.value as any)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                >
+                  <option value="detailed">
+                    {language === 'ru' ? 'По заявкам и SKU' : "Arizalar va SKU bo'yicha"}
+                  </option>
+                  <option value="sku">
+                    {language === 'ru' ? 'Свернуть по SKU' : "SKU bo'yicha guruhlash"}
+                  </option>
+                </select>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -393,14 +465,60 @@ export default function WarehouseModule() {
                             {getStatusBadge(item)}
                           </div>
                           {(user?.role === 'admin' || user?.role === 'warehouse') && (
-                            <button
-                              id={`edit-stock-btn-${item.id}`}
-                              onClick={() => handleOpenEditModal(item)}
-                              className="p-1.5 hover:bg-slate-700/60 rounded-lg text-slate-400 hover:text-indigo-400 transition-all active:scale-90 flex items-center justify-center"
-                              title={language === 'ru' ? 'Редактировать остаток' : 'Qoldiqni tahrirlash'}
-                            >
-                              <Edit className="w-3.5 h-3.5" />
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              {rawDeleteConfirmId === item.id ? (
+                                <div className="flex gap-1 justify-end items-center bg-rose-500/10 border border-rose-500/20 px-1.5 py-1 rounded-lg">
+                                  <span className="text-[9px] text-rose-400 font-bold uppercase mr-1 font-sans">
+                                    {language === 'ru' ? 'Удалить?' : "O'chirish?"}
+                                  </span>
+                                  <button
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch(`/api/inventory/${item.id}`, { method: 'DELETE' });
+                                        const data = await res.json();
+                                        if (data.success) {
+                                          refreshInventory();
+                                        } else {
+                                          alert(data.message || 'Error deleting item');
+                                        }
+                                      } catch (err) {
+                                        alert('Failed to delete item');
+                                      } finally {
+                                        setRawDeleteConfirmId(null);
+                                      }
+                                    }}
+                                    className="px-1.5 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs cursor-pointer transition-colors flex items-center justify-center font-sans"
+                                  >
+                                    ✓
+                                  </button>
+                                  <button
+                                    onClick={() => setRawDeleteConfirmId(null)}
+                                    className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs cursor-pointer transition-colors flex items-center justify-center font-sans"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <button
+                                    id={`edit-stock-btn-${item.id}`}
+                                    onClick={() => handleOpenEditModal(item)}
+                                    className="p-1.5 hover:bg-slate-700/60 rounded-lg text-slate-400 hover:text-indigo-400 transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+                                    title={language === 'ru' ? 'Редактировать остаток' : 'Qoldiqni tahrirlash'}
+                                  >
+                                    <Edit className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    id={`delete-stock-btn-${item.id}`}
+                                    onClick={() => setRawDeleteConfirmId(item.id)}
+                                    className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+                                    title={language === 'ru' ? 'Удалить остаток' : "Qoldiqni o'chirish"}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           )}
                         </div>
                       </td>
@@ -422,30 +540,119 @@ export default function WarehouseModule() {
                 <tr className="bg-slate-900 border-b border-slate-700 text-[10px] font-black tracking-wider text-slate-400 uppercase">
                   <th className="py-4 px-5">{t.warehouseModule.tblSku}</th>
                   <th className="py-4 px-5">{t.warehouseModule.tblProduct}</th>
+                  <th className="py-4 px-5">{language === 'ru' ? 'Заявка' : 'Buyurtma'}</th>
                   <th className="py-4 px-5">{t.warehouseModule.factory}</th>
                   <th className="py-4 px-5 text-right">{t.warehouseModule.tblInStock}</th>
+                  <th className="py-4 px-5 text-center">{language === 'ru' ? 'Состояние' : 'Holati'}</th>
                   <th className="py-4 px-5 text-center">{t.warehouseModule.unit}</th>
+                  {(user?.role === 'admin' || user?.role === 'warehouse') && (
+                    <th className="py-4 px-5 text-center w-28">{language === 'ru' ? 'Действия' : 'Amallar'}</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50 text-xs font-semibold text-slate-300">
-                {finishedGoods.length === 0 ? (
+                {processedFinishedGoods.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-slate-500 text-xs">
+                    <td colSpan={user?.role === 'admin' || user?.role === 'warehouse' ? 8 : 7} className="py-12 text-center text-slate-500 text-xs">
                       На складах нет готовой продукции. Поступление происходит автоматически при завершении производства.
                     </td>
                   </tr>
                 ) : (
-                  finishedGoods.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-700/20 transition-colors">
-                      <td className="py-4 px-5 font-mono font-bold text-indigo-400">{item.sku || 'N/A'}</td>
-                      <td className="py-4 px-5 text-white font-bold">{item.name}</td>
-                      <td className="py-4 px-5">{t.factories[item.factory]}</td>
-                      <td className="py-4 px-5 text-right font-mono font-black text-sm text-emerald-400">
-                        {item.quantity.toLocaleString()}
-                      </td>
-                      <td className="py-4 px-5 text-center text-slate-400 font-bold">{item.unit}</td>
-                    </tr>
-                  ))
+                  processedFinishedGoods.map((item) => {
+                    const orderNum = getOrderNumber(item);
+                    const isGrouped = item.id.startsWith('grouped-');
+                    return (
+                      <tr key={item.id} className="hover:bg-slate-700/20 transition-colors">
+                        <td className="py-4 px-5 font-mono font-bold text-indigo-400">{item.sku || 'N/A'}</td>
+                        <td className="py-4 px-5 text-white font-bold">{item.name}</td>
+                        <td className="py-4 px-5 font-mono font-black text-amber-400">
+                          {isGrouped ? (
+                            <span className="text-slate-500 font-bold font-sans">
+                              {language === 'ru' ? 'Все' : 'Barchasi'}
+                            </span>
+                          ) : (
+                            orderNum !== '—' ? `№ ${orderNum}` : '—'
+                          )}
+                        </td>
+                        <td className="py-4 px-5">{t.factories[item.factory]}</td>
+                        <td className="py-4 px-5 text-right font-mono font-black text-sm text-emerald-400">
+                          {item.quantity.toLocaleString()}
+                        </td>
+                        <td className="py-4 px-5 text-center">
+                          {item.isPacked === false ? (
+                            <span className="inline-block px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                              {language === 'ru' ? 'Не упакован' : 'Qadoqlanmagan'}
+                            </span>
+                          ) : (
+                            <span className="inline-block px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                              {language === 'ru' ? 'Упакован' : 'Qadoqlangan'}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-4 px-5 text-center text-slate-400 font-bold">{item.unit}</td>
+                        {(user?.role === 'admin' || user?.role === 'warehouse') && (
+                          <td className="py-4 px-5 text-center">
+                            {!isGrouped && (
+                              <div className="flex items-center justify-center gap-1.5">
+                                {fgDeleteConfirmId === item.id ? (
+                                  <div className="flex gap-1 justify-center items-center bg-rose-500/10 border border-rose-500/20 px-1.5 py-1 rounded-lg">
+                                    <span className="text-[9px] text-rose-400 font-bold uppercase mr-1 font-sans">
+                                      {language === 'ru' ? 'Удалить?' : "O'chirish?"}
+                                    </span>
+                                    <button
+                                      onClick={async () => {
+                                        try {
+                                          const res = await fetch(`/api/inventory/${item.id}`, { method: 'DELETE' });
+                                          const data = await res.json();
+                                          if (data.success) {
+                                            refreshInventory();
+                                          } else {
+                                            alert(data.message || 'Error deleting item');
+                                          }
+                                        } catch (err) {
+                                          alert('Failed to delete item');
+                                        } finally {
+                                          setFgDeleteConfirmId(null);
+                                        }
+                                      }}
+                                      className="px-1.5 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs cursor-pointer transition-colors flex items-center justify-center font-sans"
+                                    >
+                                      ✓
+                                    </button>
+                                    <button
+                                      onClick={() => setFgDeleteConfirmId(null)}
+                                      className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs cursor-pointer transition-colors flex items-center justify-center font-sans"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <button
+                                      id={`edit-fg-btn-${item.id}`}
+                                      onClick={() => handleOpenEditModal(item)}
+                                      className="p-1.5 hover:bg-slate-700/60 rounded-lg text-slate-400 hover:text-indigo-400 transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+                                      title={language === 'ru' ? 'Редактировать остаток' : 'Qoldiqni tahrirlash'}
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      id={`delete-fg-btn-${item.id}`}
+                                      onClick={() => setFgDeleteConfirmId(item.id)}
+                                      className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+                                      title={language === 'ru' ? 'Удалить остаток' : 'Qoldiqni o\'chirish'}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -775,7 +982,9 @@ export default function WarehouseModule() {
             <div className="px-5 py-4 border-b border-slate-700 bg-slate-900 flex items-center justify-between">
               <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
                 <Edit className="w-4.5 h-4.5 text-indigo-400" />
-                {language === 'ru' ? 'Редактирование остатка сырья' : "Xom-ashyo qoldig'ini tahrirlash"}
+                {editingItem.type === 'finished_good'
+                  ? (language === 'ru' ? 'Редактирование остатка ГП' : "Tayyor mahsulot qoldig'ini tahrirlash")
+                  : (language === 'ru' ? 'Редактирование остатка сырья' : "Xom-ashyo qoldig'ini tahrirlash")}
               </h3>
               <button 
                 onClick={() => {
@@ -797,7 +1006,9 @@ export default function WarehouseModule() {
 
               <div>
                 <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-1.5">
-                  {language === 'ru' ? 'Наименование сырья' : 'Xom-ashyo nomi'}
+                  {editingItem.type === 'finished_good'
+                    ? (language === 'ru' ? 'Наименование продукции' : 'Mahsulot nomi')
+                    : (language === 'ru' ? 'Наименование сырья' : 'Xom-ashyo nomi')}
                 </label>
                 <input
                   type="text"
@@ -837,7 +1048,7 @@ export default function WarehouseModule() {
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Quantity */}
-                <div>
+                <div className={editingItem.type === 'finished_good' ? 'col-span-2' : ''}>
                   <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-1.5">
                     {language === 'ru' ? 'Текущий остаток' : 'Joriy qoldiq'} *
                   </label>
@@ -852,19 +1063,21 @@ export default function WarehouseModule() {
                 </div>
 
                 {/* Min threshold */}
-                <div>
-                  <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-1.5">
-                    {language === 'ru' ? 'Минимальный порог' : 'Minimal chegara'}
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={editMinThreshold}
-                    onChange={(e) => setEditMinThreshold(e.target.value)}
-                    placeholder="-"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
+                {editingItem.type !== 'finished_good' && (
+                  <div>
+                    <label className="block text-[10px] text-slate-400 uppercase tracking-wider mb-1.5">
+                      {language === 'ru' ? 'Минимальный порог' : 'Minimal chegara'}
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={editMinThreshold}
+                      onChange={(e) => setEditMinThreshold(e.target.value)}
+                      placeholder="-"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Action row */}

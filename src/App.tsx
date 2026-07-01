@@ -14,9 +14,10 @@ import WarehouseModule from './components/WarehouseModule';
 import ShipmentsModule from './components/ShipmentsModule';
 import ReportsModule from './components/ReportsModule';
 import EmployeesModule from './components/EmployeesModule';
+import PackagingModule from './components/PackagingModule';
 
 import { 
-  Layers, LayoutDashboard, ClipboardList, Settings, 
+  Layers, LayoutDashboard, ClipboardList, Settings, Package,
   Warehouse, Truck, BarChart3, Users, Menu, X, ShieldAlert 
 } from 'lucide-react';
 
@@ -29,11 +30,11 @@ function AppContent() {
   const getAllowedTabs = (role: string) => {
     switch (role) {
       case 'admin':
-        return ['dashboard', 'orders', 'production', 'warehouse', 'shipments', 'reports', 'employees'];
+        return ['dashboard', 'orders', 'production', 'packaging', 'warehouse', 'shipments', 'reports', 'employees'];
       case 'manager':
         return ['dashboard', 'orders', 'reports'];
       case 'production':
-        return ['production'];
+        return ['production', 'packaging'];
       case 'warehouse':
         return ['warehouse', 'shipments'];
       case 'supervisor':
@@ -69,6 +70,7 @@ function AppContent() {
     { id: 'dashboard', label: t.tabs.dashboard, icon: LayoutDashboard },
     { id: 'orders', label: t.tabs.orders, icon: ClipboardList },
     { id: 'production', label: t.tabs.production, icon: Settings },
+    { id: 'packaging', label: t.tabs.packaging, icon: Package },
     { id: 'warehouse', label: t.tabs.warehouse, icon: Warehouse },
     { id: 'shipments', label: t.tabs.shipments, icon: Truck },
     { id: 'reports', label: t.tabs.reports, icon: BarChart3 },
@@ -83,6 +85,8 @@ function AppContent() {
         return <OrdersModule />;
       case 'production':
         return <ProductionModule />;
+      case 'packaging':
+        return <PackagingModule />;
       case 'warehouse':
         return <WarehouseModule />;
       case 'shipments':
@@ -121,16 +125,16 @@ function AppContent() {
 
         {/* Sidebar Nav */}
         <aside 
-          className={`bg-slate-900/40 border-r border-slate-900 w-64 p-5 flex flex-col gap-6 fixed inset-y-0 left-0 z-40 transform lg:transform-none lg:static transition-transform duration-200 ease-in-out print:hidden ${
-            sidebarOpen ? 'translate-x-0 bg-slate-900' : '-translate-x-full lg:translate-x-0'
+          className={`bg-white border-r border-slate-200/80 w-64 p-5 flex flex-col gap-6 fixed inset-y-0 left-0 z-40 transform lg:transform-none lg:static transition-transform duration-200 ease-in-out print:hidden ${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
           {/* Mobile Sidebar Close Button */}
           <div className="flex justify-between items-center lg:hidden">
-            <span className="font-bold text-xs uppercase text-slate-400">Навигация</span>
+            <span className="font-bold text-xs uppercase text-slate-500">Навигация</span>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"
+              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -150,10 +154,10 @@ function AppContent() {
                     className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold tracking-wide transition-all ${
                       isActive 
                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10' 
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    <Icon className={`w-4.5 h-4.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <Icon className={`w-4.5 h-4.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                     <span className="truncate">{item.label}</span>
                   </button>
                 </li>
