@@ -35,7 +35,7 @@ export default function WarehouseModule() {
   const [rawName, setRawName] = useState('');
   const [rawQty, setRawQty] = useState('');
   const [rawUnit, setRawUnit] = useState('pcs');
-  const [rawFactory, setRawFactory] = useState<'Keles' | 'Yunusobod'>('Keles');
+  const [rawFactory, setRawFactory] = useState<'Keles'>('Keles');
   const [rawComment, setRawComment] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -368,7 +368,6 @@ export default function WarehouseModule() {
                   {language === 'ru' ? 'Все заводы' : 'Barcha zavodlar'}
                 </option>
                 <option value="Keles">Keles ({language === 'ru' ? 'Келес' : 'Keles'})</option>
-                <option value="Yunusobod">Yunusobod ({language === 'ru' ? 'Юнусобод' : 'Yunusobod'})</option>
               </select>
             </div>
 
@@ -935,7 +934,6 @@ export default function WarehouseModule() {
                     className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-slate-300 focus:outline-none"
                   >
                     <option value="Keles">Келес (Keles)</option>
-                    <option value="Yunusobod">Юнусобод (Yunusobod)</option>
                   </select>
                 </div>
               </div>

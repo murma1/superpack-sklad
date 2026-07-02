@@ -108,27 +108,6 @@ export default function Navbar() {
 
           {/* Right menu options */}
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Clear All Data Button */}
-            <button
-              onClick={async () => {
-                const confirmClear = window.confirm(
-                  language === 'ru' 
-                    ? 'Вы действительно хотите полностью очистить все заказы, склад и товары?' 
-                    : 'Haqiqatan ham barcha buyurtmalar, ombor va mahsulotlarni tozalashni xohlaysizmi?'
-                );
-                if (confirmClear) {
-                  const success = await clearAllData();
-                  if (success) {
-                    alert(language === 'ru' ? 'Данные успешно очищены!' : 'Ma\'lumotlar muvaffaqiyatli tozalandi!');
-                  }
-                }
-              }}
-              className="p-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-slate-800 transition-colors flex items-center justify-center focus:outline-none cursor-pointer"
-              title={language === 'ru' ? 'Очистить все данные' : 'Barcha ma\'lumotlarni tozalash'}
-            >
-              <Trash2 className="w-5 h-5 text-rose-500 hover:scale-110 transition-transform" />
-            </button>
-
             {/* Language Selector */}
             <div className="relative" ref={langRef}>
               <button

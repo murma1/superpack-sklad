@@ -26,7 +26,7 @@ export default function ProductionModule() {
   const [cpProduced, setCpProduced] = useState('');
   const [cpDefective, setCpDefective] = useState('0');
   const [cpShift, setCpShift] = useState('day');
-  const [cpEquipment, setCpEquipment] = useState('');
+  const [cpEquipment, setCpEquipment] = useState('AM8320 Bottomer');
   const [cpComment, setCpComment] = useState('');
   const [cpDate, setCpDate] = useState(''); // YYYY-MM-DD HH:MM
   
@@ -55,7 +55,7 @@ export default function ProductionModule() {
   // Pre-populate fields when an order is selected
   useEffect(() => {
     if (selectedOrder) {
-      setCpEquipment(selectedOrder.equipment || '');
+      setCpEquipment(selectedOrder.equipment || 'AM8320 Bottomer');
       setCpShift(selectedOrder.shift || 'day');
       setCpDate(getGMT5DateString());
       
@@ -67,7 +67,7 @@ export default function ProductionModule() {
       setSelectedCpRawId('');
       setCpRawQty('');
     } else {
-      setCpEquipment('');
+      setCpEquipment('AM8320 Bottomer');
       setCpShift('day');
       setCpDate('');
     }
@@ -86,7 +86,7 @@ export default function ProductionModule() {
     const updates: Partial<Order> = {
       status: 'InProduction',
       productionStart: nowStr,
-      equipment: cpEquipment || 'Линия 1',
+      equipment: cpEquipment || 'AM8320 Bottomer',
       shift: cpShift || 'day'
     };
 

@@ -10,7 +10,7 @@ import { DBStore } from './src/db_store';
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = 3000;
   const db = new DBStore();
 
   app.use(express.json());
@@ -22,12 +22,13 @@ async function startServer() {
     const { username, password } = req.body;
     const users = db.getUsers();
     
-    // Very simple password check (default is '123' for testing all accounts)
+    // Check user-specific password, or fallback to '123'
     const user = users.find(u => u.username === username);
-    if (user && password === '123') {
+    const expectedPassword = user?.password || '123';
+    if (user && password === expectedPassword) {
       res.json({ success: true, user });
     } else {
-      res.status(401).json({ success: false, message: 'Неверное имя пользователя или пароль (используйте пароль 123)' });
+      res.status(401).json({ success: false, message: `Неверное имя пользователя или пароль (используйте пароль ${expectedPassword})` });
     }
   });
 
@@ -62,7 +63,7 @@ async function startServer() {
 
   app.post('/api/users', (req, res) => {
     try {
-      const { username, name, role, language } = req.body;
+      const { username, name, role, language, password } = req.body;
       if (!username || !name || !role) {
         return res.status(400).json({ success: false, message: 'Username, name, and role are required' });
       }
@@ -77,7 +78,8 @@ async function startServer() {
         username,
         name,
         role,
-        language: language || 'ru'
+        language: language || 'ru',
+        password: password || undefined
       });
       res.json({ success: true, user: newUser });
     } catch (err: any) {
@@ -88,7 +90,7 @@ async function startServer() {
   app.put('/api/users/:id', (req, res) => {
     try {
       const { id } = req.params;
-      const { username, name, role, language } = req.body;
+      const { username, name, role, language, password } = req.body;
       
       // Check if username already taken by another user
       if (username) {
@@ -98,7 +100,7 @@ async function startServer() {
         }
       }
 
-      const updated = db.updateUser(id, { username, name, role, language });
+      const updated = db.updateUser(id, { username, name, role, language, password });
       if (updated) {
         res.json({ success: true, user: updated });
       } else {

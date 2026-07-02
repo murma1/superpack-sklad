@@ -320,7 +320,7 @@ export default function PackagingModule() {
                         {getProductLabel(o.productSku)}
                       </h4>
                       <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold">
-                        <span>{language === 'ru' ? 'Завод: ' : 'Zavod: '} {language === 'ru' ? (o.factory === 'Keles' ? 'Келес' : 'Юнусобод') : o.factory}</span>
+                        <span>{language === 'ru' ? 'Завод: ' : 'Zavod: '} {language === 'ru' ? 'Келес' : 'Keles'}</span>
                         <span>{language === 'ru' ? 'Произведено: ' : 'Ishlab chiqarildi: '} {o.produced.toLocaleString()}</span>
                       </div>
                     </div>
@@ -357,7 +357,7 @@ export default function PackagingModule() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl">
-                      {language === 'ru' ? 'Завод: ' : 'Zavod: '} <strong>{language === 'ru' ? (selectedOrder.factory === 'Keles' ? 'Келес' : 'Юнусобод') : selectedOrder.factory}</strong>
+                      {language === 'ru' ? 'Завод: ' : 'Zavod: '} <strong>{language === 'ru' ? 'Келес' : 'Keles'}</strong>
                     </span>
                   </div>
                 </div>

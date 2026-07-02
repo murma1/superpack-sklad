@@ -92,7 +92,7 @@ export default function LoginScreen() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10 px-4">
-        <div className="bg-slate-800/90 backdrop-blur-md py-8 px-6 shadow-2xl rounded-2xl border border-slate-700/60 sm:px-10">
+        <div className="bg-[#ffffff] backdrop-blur-md py-8 px-6 shadow-2xl rounded-2xl border border-slate-700/60 sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm p-3 rounded-xl">
@@ -153,42 +153,7 @@ export default function LoginScreen() {
             </div>
           </form>
 
-          <div className="mt-8">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-700"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="px-2 bg-slate-800 text-slate-400 font-medium">
-                  {t.quickLogin}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-1 gap-2.5 max-h-56 overflow-y-auto pr-1">
-              {presets.map((preset) => (
-                <button
-                  key={preset.username}
-                  type="button"
-                  onClick={() => handleQuickLogin(preset.username)}
-                  className={`w-full text-left p-3 rounded-xl border flex items-center justify-between transition-all duration-150 hover:shadow-md ${preset.color}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-lg bg-white/60">
-                      <Shield className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold leading-none">{preset.label}</div>
-                      <div className="text-[10px] opacity-75 mt-0.5">{preset.desc}</div>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-mono bg-white/80 px-1.5 py-0.5 rounded uppercase font-medium">
-                    user: {preset.username}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Quick testing buttons removed */}
         </div>
         <p className="mt-4 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} Production Order Management System. All Rights Reserved.

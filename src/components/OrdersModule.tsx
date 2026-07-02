@@ -22,7 +22,7 @@ export default function OrdersModule() {
 
   const [activeSubTab, setActiveSubTab] = useState<'orders' | 'products'>('orders');
   const [search, setSearch] = useState('');
-  const [factoryFilter, setFactoryFilter] = useState<'all' | 'Keles' | 'Yunusobod'>('all');
+  const [factoryFilter, setFactoryFilter] = useState<'all' | 'Keles'>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
@@ -293,13 +293,19 @@ export default function OrdersModule() {
       {/* Sub Tabs */}
       <div className="bg-slate-800 p-1.5 rounded-xl border border-slate-700/60 flex max-w-sm">
         <button
-          onClick={() => setActiveSubTab('orders')}
+          onClick={() => {
+            setActiveSubTab('orders');
+            setSearch('');
+          }}
           className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeSubTab === 'orders' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
         >
           {t.tabs.orders}
         </button>
         <button
-          onClick={() => setActiveSubTab('products')}
+          onClick={() => {
+            setActiveSubTab('products');
+            setSearch('');
+          }}
           className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeSubTab === 'products' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
         >
           {t.productsModule.title}
@@ -355,7 +361,6 @@ export default function OrdersModule() {
                 >
                   <option value="all">{t.ordersModule.filterFactory}</option>
                   <option value="Keles">Келес (Keles)</option>
-                  <option value="Yunusobod">Юнусобод (Yunusobod)</option>
                 </select>
               </div>
 
@@ -566,7 +571,7 @@ export default function OrdersModule() {
       ) : (
         /* SKU Directory (Справочник SKU) */
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-extrabold text-white tracking-tight">{t.productsModule.title}</h2>
               <p className="text-xs text-slate-400 mt-0.5">Внутренний реестр сырья, полуфабрикатов и готовой продукции</p>
@@ -591,131 +596,163 @@ export default function OrdersModule() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((prod) => (
-              <div 
-                key={prod.sku} 
-                className={`bg-slate-800 border rounded-2xl p-5 shadow flex flex-col justify-between ${prod.isArchived ? 'border-slate-700/40 opacity-55' : 'border-slate-700/60'}`}
-              >
-                <div>
-                  {/* Photo cover display */}
-                  {prod.photos && prod.photos.length > 0 && (
-                    <div 
-                      onClick={() => {
-                        setActiveLightboxPhotos(prod.photos || null);
-                        setActiveLightboxIndex(0);
-                      }}
-                      className="relative h-44 w-full mb-4 rounded-xl overflow-hidden group cursor-zoom-in bg-slate-900 border border-slate-700/30"
-                    >
-                      <img 
-                        src={prod.photos[0]} 
-                        alt={prod.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-slate-950/10 transition-colors" />
-                      {prod.photos.length > 1 && (
-                        <div className="absolute bottom-2.5 right-2.5 bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[9px] font-black text-indigo-400 border border-slate-700/50">
-                          +{prod.photos.length - 1} {language === 'ru' ? 'фото' : 'rasm'}
+          {/* Search bar for Products */}
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <Search className="w-4 h-4" />
+            </div>
+            <input
+              type="text"
+              placeholder={language === 'ru' ? "Поиск по наименованию, SKU или описанию..." : "Nomi, SKU yoki tavsifi bo'yicha qidirish..."}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 pl-9 pr-4 text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-slate-500 transition-all"
+            />
+          </div>
+
+          {products.filter(p => {
+            const term = search.toLowerCase();
+            return p.name.toLowerCase().includes(term) ||
+                   p.sku.toLowerCase().includes(term) ||
+                   p.description.toLowerCase().includes(term);
+          }).length === 0 ? (
+            <div className="py-12 text-center text-slate-500 text-xs bg-slate-800/40 border border-dashed border-slate-700/60 rounded-2xl">
+              {language === 'ru' ? 'В справочнике продукции нет подходящих товаров.' : "Mahsulotlar ro'yxatida mos keladigan tovarlar topilmadi."}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products
+                .filter(p => {
+                  const term = search.toLowerCase();
+                  return p.name.toLowerCase().includes(term) ||
+                         p.sku.toLowerCase().includes(term) ||
+                         p.description.toLowerCase().includes(term);
+                })
+                .map((prod) => (
+                  <div 
+                    key={prod.sku} 
+                    className={`bg-slate-800 border rounded-2xl p-5 shadow flex flex-col justify-between ${prod.isArchived ? 'border-slate-700/40 opacity-55' : 'border-slate-700/60'}`}
+                  >
+                    <div>
+                      {/* Photo cover display */}
+                      {prod.photos && prod.photos.length > 0 && (
+                        <div 
+                          onClick={() => {
+                            setActiveLightboxPhotos(prod.photos || null);
+                            setActiveLightboxIndex(0);
+                          }}
+                          className="relative h-44 w-full mb-4 rounded-xl overflow-hidden group cursor-zoom-in bg-slate-900 border border-slate-700/30"
+                        >
+                          <img 
+                            src={prod.photos[0]} 
+                            alt={prod.name} 
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-slate-950/10 transition-colors" />
+                          {prod.photos.length > 1 && (
+                            <div className="absolute bottom-2.5 right-2.5 bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[9px] font-black text-indigo-400 border border-slate-700/50">
+                              +{prod.photos.length - 1} {language === 'ru' ? 'фото' : 'rasm'}
+                            </div>
+                          )}
                         </div>
                       )}
-                    </div>
-                  )}
 
-                  <div className="flex items-start justify-between">
-                    <span className="text-[10px] font-mono font-black uppercase bg-indigo-950/40 px-2.5 py-1 rounded-lg text-indigo-400 tracking-wider">
-                      {prod.sku}
-                    </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${prod.isArchived ? 'bg-slate-700 text-slate-400' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
-                      {prod.isArchived ? t.productsModule.archived : t.productsModule.active}
-                    </span>
-                  </div>
-                  
-                  <h4 className="text-white font-extrabold text-base mt-3 leading-snug">{prod.name}</h4>
-                  <p className="text-slate-400 text-xs font-semibold mt-1.5 leading-relaxed min-h-[36px]">{prod.description}</p>
-                  
-                  {/* Specification attached file */}
-                  {prod.specification && (
-                    <div className="mt-3.5 p-3 rounded-xl bg-slate-900/40 border border-slate-700/50 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <FileText className="w-5 h-5 text-indigo-400 shrink-0" />
-                        <div className="min-w-0">
-                          <span className="text-[11px] text-white font-bold block truncate" title={prod.specification.name}>
-                            {prod.specification.name}
-                          </span>
-                          <span className="text-[9px] text-slate-400 font-mono">
-                            {(prod.specification.size / 1024).toFixed(1)} KB
-                          </span>
+                      <div className="flex items-start justify-between">
+                        <span className="text-[10px] font-mono font-black uppercase bg-indigo-950/40 px-2.5 py-1 rounded-lg text-indigo-400 tracking-wider">
+                          {prod.sku}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${prod.isArchived ? 'bg-slate-700 text-slate-400' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+                          {prod.isArchived ? t.productsModule.archived : t.productsModule.active}
+                        </span>
+                      </div>
+                      
+                      <h4 className="text-white font-extrabold text-base mt-3 leading-snug">{prod.name}</h4>
+                      <p className="text-slate-400 text-xs font-semibold mt-1.5 leading-relaxed min-h-[36px]">{prod.description}</p>
+                      
+                      {/* Specification attached file */}
+                      {prod.specification && (
+                        <div className="mt-3.5 p-3 rounded-xl bg-slate-900/40 border border-slate-700/50 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <FileText className="w-5 h-5 text-indigo-400 shrink-0" />
+                            <div className="min-w-0">
+                              <span className="text-[11px] text-white font-bold block truncate" title={prod.specification.name}>
+                                {prod.specification.name}
+                              </span>
+                              <span className="text-[9px] text-slate-400 font-mono">
+                                {(prod.specification.size / 1024).toFixed(1)} KB
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const link = document.createElement('a');
+                              link.href = prod.specification!.base64;
+                              link.download = prod.specification!.name;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }}
+                            title={language === 'ru' ? 'Скачать спецификацию' : 'Spetsifikatsiyani yuklab olish'}
+                            className="p-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600 border border-indigo-500/20 hover:border-indigo-500 text-indigo-400 hover:text-white transition-all cursor-pointer focus:outline-none"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const link = document.createElement('a');
-                          link.href = prod.specification!.base64;
-                          link.download = prod.specification!.name;
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        }}
-                        title={language === 'ru' ? 'Скачать спецификацию' : 'Spetsifikatsiyani yuklab olish'}
-                        className="p-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600 border border-indigo-500/20 hover:border-indigo-500 text-indigo-400 hover:text-white transition-all cursor-pointer focus:outline-none"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
+                      )}
+
+                      
                     </div>
-                  )}
 
-                  
-                </div>
-
-                {(user?.role === 'admin' || user?.role === 'manager') && (
-                  <div className="flex gap-2.5 mt-5 pt-3 border-t border-slate-700/30">
-                    <button
-                      onClick={() => startEditSku(prod)}
-                      className="flex-1 py-2 rounded-xl bg-slate-900 hover:bg-slate-700 text-xs font-bold text-indigo-400 border border-slate-700 flex items-center justify-center gap-1.5 transition-all active:scale-95 focus:outline-none cursor-pointer"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      Текст
-                    </button>
-                    <button
-                      onClick={() => toggleArchiveSku(prod)}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all active:scale-95 focus:outline-none cursor-pointer ${prod.isArchived ? 'bg-emerald-500/10 hover:bg-emerald-500 border-emerald-500/20 text-emerald-400 hover:text-white' : 'bg-rose-500/10 hover:bg-rose-500 border-rose-500/20 text-rose-400 hover:text-white'}`}
-                    >
-                      <Archive className="w-3.5 h-3.5" />
-                      {prod.isArchived ? t.productsModule.btnRestore : t.productsModule.btnArchive}
-                    </button>
-                    {skuDeleteConfirmId === prod.sku ? (
-                      <div className="flex gap-1.5 justify-end items-center">
+                    {(user?.role === 'admin' || user?.role === 'manager') && (
+                      <div className="flex gap-2.5 mt-5 pt-3 border-t border-slate-700/30">
                         <button
-                          onClick={() => handleDeleteSku(prod.sku)}
-                          className="px-3 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition-all cursor-pointer focus:outline-none"
-                          title={language === 'ru' ? 'Да, удалить' : 'Ha, o\'chirish'}
+                          onClick={() => startEditSku(prod)}
+                          className="flex-1 py-2 rounded-xl bg-slate-900 hover:bg-slate-700 text-xs font-bold text-indigo-400 border border-slate-700 flex items-center justify-center gap-1.5 transition-all active:scale-95 focus:outline-none cursor-pointer"
                         >
-                          ✓
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Текст
                         </button>
                         <button
-                          onClick={() => setSkuDeleteConfirmId(null)}
-                          className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-700 text-slate-400 border border-slate-700 transition-all cursor-pointer focus:outline-none"
-                          title={language === 'ru' ? 'Отмена' : 'Bekor qilish'}
+                          onClick={() => toggleArchiveSku(prod)}
+                          className={`flex-1 py-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all active:scale-95 focus:outline-none cursor-pointer ${prod.isArchived ? 'bg-emerald-500/10 hover:bg-emerald-500 border-emerald-500/20 text-emerald-400 hover:text-white' : 'bg-rose-500/10 hover:bg-rose-500 border-rose-500/20 text-rose-400 hover:text-white'}`}
                         >
-                          ✕
+                          <Archive className="w-3.5 h-3.5" />
+                          {prod.isArchived ? t.productsModule.btnRestore : t.productsModule.btnArchive}
                         </button>
+                        {skuDeleteConfirmId === prod.sku ? (
+                          <div className="flex gap-1.5 justify-end items-center">
+                            <button
+                              onClick={() => handleDeleteSku(prod.sku)}
+                              className="px-3 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition-all cursor-pointer focus:outline-none"
+                              title={language === 'ru' ? 'Да, удалить' : 'Ha, o\'chirish'}
+                            >
+                              ✓
+                            </button>
+                            <button
+                              onClick={() => setSkuDeleteConfirmId(null)}
+                              className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-700 text-slate-400 border border-slate-700 transition-all cursor-pointer focus:outline-none"
+                              title={language === 'ru' ? 'Отмена' : 'Bekor qilish'}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setSkuDeleteConfirmId(prod.sku)}
+                            title={language === 'ru' ? 'Удалить навсегда' : 'Butunlay o\'chirish'}
+                            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-600 border border-rose-500/20 hover:border-rose-500 text-rose-400 hover:text-white flex items-center justify-center transition-all active:scale-95 focus:outline-none cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => setSkuDeleteConfirmId(prod.sku)}
-                        title={language === 'ru' ? 'Удалить навсегда' : 'Butunlay o\'chirish'}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-600 border border-rose-500/20 hover:border-rose-500 text-rose-400 hover:text-white flex items-center justify-center transition-all active:scale-95 focus:outline-none cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
                     )}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                ))}
+            </div>
+          )}
         </div>
       )}
 

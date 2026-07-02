@@ -11,6 +11,7 @@ export interface User {
   name: string;
   role: UserRole;
   language: 'ru' | 'uz';
+  password?: string;
 }
 
 export interface Product {
@@ -50,7 +51,7 @@ export interface Order {
   date: string; // YYYY-MM-DD
   productSku: string;
   quantityOrdered: number;
-  factory: 'Keles' | 'Yunusobod';
+  factory: 'Keles';
   unitsPerPallet: number;
   comment: string;
   status: OrderStatus;
@@ -84,7 +85,7 @@ export interface InventoryItem {
   sku?: string; // for finished goods, references product sku
   quantity: number;
   minThreshold?: number; // low-stock trigger limit (only for raw materials)
-  factory: 'Keles' | 'Yunusobod';
+  factory: 'Keles';
   unit: string; // kg, pcs, rolls, etc.
   isPacked?: boolean; // true = Packed, false = Unpacked
   orderId?: string;
@@ -98,7 +99,7 @@ export interface InventoryTransaction {
   itemName: string;
   sku?: string;
   quantity: number; // positive or negative
-  factory: 'Keles' | 'Yunusobod';
+  factory: 'Keles';
   user: string;
   referenceId?: string; // references orderId or shipmentId
   comment?: string;

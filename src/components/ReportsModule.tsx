@@ -56,7 +56,7 @@ export default function ReportsModule() {
   const defectReport = orders.filter(o => filterByPeriod(o.date) && o.defective > 0);
 
   // 3. Factory report data
-  const factoriesList = ['Keles', 'Yunusobod'];
+  const factoriesList = ['Keles'];
   const factoryReport = factoriesList.map(f => {
     const factoryOrders = orders.filter(o => o.factory === f && filterByPeriod(o.date));
     const totalOrdered = factoryOrders.reduce((sum, o) => sum + o.quantityOrdered, 0);
@@ -172,7 +172,7 @@ export default function ReportsModule() {
         o.orderNumber,
         o.date,
         o.productSku,
-        o.factory === 'Keles' ? 'Келес' : 'Юнусобод',
+        'Келес',
         o.quantityOrdered,
         o.produced,
         o.defective,
@@ -190,7 +190,7 @@ export default function ReportsModule() {
     const invRows = inventory.map(i => [
       i.name,
       i.type === 'raw_material' ? 'Сырье' : 'Готовая продукция',
-      i.factory === 'Keles' ? 'Келес' : 'Юнусобод',
+      'Келес',
       i.quantity,
       i.unit
     ]);

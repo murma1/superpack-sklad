@@ -26,7 +26,7 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
   });
   const [productSku, setProductSku] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [factory, setFactory] = useState<'Keles' | 'Yunusobod'>('Keles');
+  const [factory, setFactory] = useState<'Keles'>('Keles');
   const [unitsPerPallet, setUnitsPerPallet] = useState('');
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
@@ -227,7 +227,6 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="Keles">Келес (Keles)</option>
-                <option value="Yunusobod">Юнусобод (Yunusobod)</option>
               </select>
             </div>
           </div>

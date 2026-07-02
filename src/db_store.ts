@@ -53,18 +53,13 @@ const DEFAULT_PRODUCTS: Product[] = [
 
 const DEFAULT_INVENTORY: InventoryItem[] = [
   // Keles Factory
-  { id: 'raw-kel-1', name: 'ПЭТ Преформы 1.5л (PET Preforms 1.5L)', type: 'raw_material', quantity: 12500, minThreshold: 3000, factory: 'Keles', unit: 'pcs' },
-  { id: 'raw-kel-2', name: 'Крышки пластиковые (Plastic Caps)', type: 'raw_material', quantity: 24000, minThreshold: 5000, factory: 'Keles', unit: 'pcs' },
+  { id: 'raw-kel-1', name: 'ПЭТ Преформы 1.5л (PET Preforms 1.5L)', type: 'raw_material', quantity: 14300, minThreshold: 3000, factory: 'Keles', unit: 'pcs' },
+  { id: 'raw-kel-2', name: 'Крышки пластиковые (Plastic Caps)', type: 'raw_material', quantity: 39000, minThreshold: 5000, factory: 'Keles', unit: 'pcs' },
   { id: 'raw-kel-3', name: 'Этикетка Coca-Cola 1.5л (Labels Cola 1.5L)', type: 'raw_material', quantity: 18000, minThreshold: 4000, factory: 'Keles', unit: 'pcs' },
-  { id: 'raw-kel-4', name: 'Двуокись углерода CO2 (Carbon Dioxide CO2)', type: 'raw_material', quantity: 850, minThreshold: 200, factory: 'Keles', unit: 'kg' },
+  { id: 'raw-kel-4', name: 'Двуокись углерода CO2 (Carbon Dioxide CO2)', type: 'raw_material', quantity: 1300, minThreshold: 200, factory: 'Keles', unit: 'kg' },
   { id: 'raw-kel-5', name: 'Термоусадочная пленка (Shrink Wrap)', type: 'raw_material', quantity: 120, minThreshold: 30, factory: 'Keles', unit: 'rolls' },
-  
-  // Yunusobod Factory
-  { id: 'raw-yun-1', name: 'ПЭТ Преформы 1.5л (PET Preforms 1.5L)', type: 'raw_material', quantity: 1800, minThreshold: 3000, factory: 'Yunusobod', unit: 'pcs' }, // Trigger warning
-  { id: 'raw-yun-2', name: 'Крышки пластиковые (Plastic Caps)', type: 'raw_material', quantity: 15000, minThreshold: 5000, factory: 'Yunusobod', unit: 'pcs' },
-  { id: 'raw-yun-3', name: 'Этикетка Fanta 1.5л (Labels Fanta 1.5L)', type: 'raw_material', quantity: 9500, minThreshold: 2000, factory: 'Yunusobod', unit: 'pcs' },
-  { id: 'raw-yun-4', name: 'Этикетка Sprite 1.5л (Labels Sprite 1.5L)', type: 'raw_material', quantity: 1200, minThreshold: 2000, factory: 'Yunusobod', unit: 'pcs' }, // Trigger warning
-  { id: 'raw-yun-5', name: 'Двуокись углерода CO2 (Carbon Dioxide CO2)', type: 'raw_material', quantity: 450, minThreshold: 200, factory: 'Yunusobod', unit: 'kg' },
+  { id: 'raw-kel-6', name: 'Этикетка Fanta 1.5л (Labels Fanta 1.5L)', type: 'raw_material', quantity: 9500, minThreshold: 2000, factory: 'Keles', unit: 'pcs' },
+  { id: 'raw-kel-7', name: 'Этикетка Sprite 1.5л (Labels Sprite 1.5L)', type: 'raw_material', quantity: 1200, minThreshold: 2000, factory: 'Keles', unit: 'pcs' },
 ];
 
 // Helper to get date relative to today
@@ -121,7 +116,7 @@ const DEFAULT_ORDERS: Order[] = [
     date: getDateOffset(-3),
     productSku: 'PRD-FAN-15',
     quantityOrdered: 7200, // 20 pallets
-    factory: 'Yunusobod',
+    factory: 'Keles',
     unitsPerPallet: 360,
     comment: 'Регулярная поставка склад Ташкент',
     status: 'InProduction',
@@ -168,7 +163,7 @@ const DEFAULT_ORDERS: Order[] = [
     date: getDateOffset(-1),
     productSku: 'PRD-SPR-15',
     quantityOrdered: 3600,
-    factory: 'Yunusobod',
+    factory: 'Keles',
     unitsPerPallet: 360,
     comment: 'Промо-акция летний сезон',
     status: 'New',
@@ -299,7 +294,7 @@ const DEFAULT_TRANSACTIONS: InventoryTransaction[] = [
     itemName: 'Fanta Orange 1.5L',
     sku: 'PRD-FAN-15',
     quantity: 3960,
-    factory: 'Yunusobod',
+    factory: 'Keles',
     user: 'Тимур Усманов (Production)',
     referenceId: 'ord-2',
     comment: 'Частичное поступление готовой продукции (11 паллет) PO-2026-0002'
@@ -312,7 +307,7 @@ const DEFAULT_TRANSACTIONS: InventoryTransaction[] = [
     itemName: 'Fanta Orange 1.5L',
     sku: 'PRD-FAN-15',
     quantity: -1440,
-    factory: 'Yunusobod',
+    factory: 'Keles',
     user: 'Сардор Рахимов (Warehouse)',
     referenceId: 'ord-2',
     comment: 'Частичная отгрузка по накладной TTN-2026-9844'
@@ -367,24 +362,24 @@ const DEFAULT_NOTIFICATIONS: Notification[] = [
     id: 'notif-2',
     timestamp: getDateOffset(-1) + 'T10:45:00.000Z',
     type: 'info',
-    messageRu: 'Запущено производство по заявке PO-2026-0002 на заводе Юнусобод.',
-    messageUz: 'Yunusobod zavodida PO-2026-0002 buyurtmasi bo\'yicha ishlab chiqarish boshlandi.',
+    messageRu: 'Запущено производство по заявке PO-2026-0002 на заводе Келес.',
+    messageUz: 'Keles zavodida PO-2026-0002 buyurtmasi bo\'yicha ishlab chiqarish boshlandi.',
     read: true
   },
   {
     id: 'notif-3',
     timestamp: getDateOffset(0) + 'T08:00:00.000Z',
     type: 'warning',
-    messageRu: 'Низкий остаток сырья: "ПЭТ Преформы 1.5л" на заводе Юнусобод (1800 шт остаток, порог 3000 шт).',
-    messageUz: 'Xom-ashyo qoldig\'i kam: Yunusobod zavodida "PET Preformalar 1.5l" (qoldiq 1800 dona, chegara 3000 dona).',
+    messageRu: 'Низкий остаток сырья: "ПЭТ Преформы 1.5л" на заводе Келес (1800 шт остаток, порог 3000 шт).',
+    messageUz: 'Xom-ashyo qoldig\'i kam: Keles zavodida "PET Preformalar 1.5l" (qoldiq 1800 dona, chegara 3000 dona).',
     read: false
   },
   {
     id: 'notif-4',
     timestamp: getDateOffset(0) + 'T08:05:00.000Z',
     type: 'warning',
-    messageRu: 'Низкий остаток сырья: "Этикетка Sprite 1.5л" на заводе Юнусобод (1200 шт остаток, порог 2000 шт).',
-    messageUz: 'Xom-ashyo qoldig\'i kam: Yunusobod zavodida "Sprite yorlig\'i 1.5l" (qoldiq 1200 dona, chegara 2000 dona).',
+    messageRu: 'Низкий остаток сырья: "Этикетка Sprite 1.5л" на заводе Келес (1200 шт остаток, порог 2000 шт).',
+    messageUz: 'Xom-ashyo qoldig\'i kam: Keles zavodida "Sprite yorlig\'i 1.5l" (qoldiq 1200 dona, chegara 2000 dona).',
     read: false
   }
 ];
@@ -424,6 +419,29 @@ export class DBStore {
           shipments: parsed.shipments || DEFAULT_SHIPMENTS,
           rawMaterialsCatalog: parsed.rawMaterialsCatalog || DEFAULT_RAW_CATALOG,
         };
+
+        // Sync raw material units/thresholds from catalog
+        if (this.data.inventory && this.data.rawMaterialsCatalog) {
+          let hasChanges = false;
+          this.data.inventory.forEach(item => {
+            if (item.type === 'raw_material') {
+              const catItem = this.data.rawMaterialsCatalog.find(c => c.name === item.name);
+              if (catItem) {
+                if (item.unit !== catItem.unit) {
+                  item.unit = catItem.unit;
+                  hasChanges = true;
+                }
+                if (catItem.minThreshold !== undefined && item.minThreshold !== catItem.minThreshold) {
+                  item.minThreshold = catItem.minThreshold;
+                  hasChanges = true;
+                }
+              }
+            }
+          });
+          if (hasChanges) {
+            this.save();
+          }
+        }
       } else {
         this.save();
       }
@@ -563,8 +581,8 @@ export class DBStore {
 
     // Notification for new order
     this.addNotification('info', 
-      `Создана новая заявка ${newOrder.orderNumber} на завод ${newOrder.factory === 'Keles' ? 'Келес' : 'Юнусобод'}.`,
-      `${newOrder.factory === 'Keles' ? 'Keles' : 'Yunusobod'} zavodida yangi ${newOrder.orderNumber} buyurtmasi yaratildi.`
+      `Создана новая заявка ${newOrder.orderNumber} на завод Келес.`,
+      `Keles zavodida yangi ${newOrder.orderNumber} buyurtmasi yaratildi.`
     );
 
     this.save();
@@ -645,8 +663,8 @@ export class DBStore {
             // Alert if below threshold
             if (item.minThreshold !== undefined && item.quantity < item.minThreshold) {
               this.addNotification('warning',
-                `Низкий остаток сырья: "${item.name}" на заводе ${item.factory === 'Keles' ? 'Келес' : 'Юнусобод'} (${item.quantity} ${item.unit} остаток, порог ${item.minThreshold} ${item.unit}).`,
-                `Xom-ashyo qoldig'i kam: ${item.factory === 'Keles' ? 'Keles' : 'Yunusobod'} zavodida "${item.name}" (qoldiq ${item.quantity} ${item.unit}, chegara ${item.minThreshold} ${item.unit}).`
+                `Низкий остаток сырья: "${item.name}" на заводе Келес (${item.quantity} ${item.unit} остаток, порог ${item.minThreshold} ${item.unit}).`,
+                `Xom-ashyo qoldig'i kam: Keles zavodida "${item.name}" (qoldiq ${item.quantity} ${item.unit}, chegara ${item.minThreshold} ${item.unit}).`
               );
             }
           }
@@ -797,7 +815,7 @@ export class DBStore {
     itemName: string, 
     type: 'raw_material' | 'finished_good', 
     qtyChange: number, 
-    factory: 'Keles' | 'Yunusobod', 
+    factory: 'Keles', 
     user: string,
     refId?: string,
     comment?: string,
@@ -875,10 +893,29 @@ export class DBStore {
       }
     } else {
       item = this.data.inventory.find(i => i.name === itemName && i.factory === factory && i.type === type);
+      if (item && type === 'raw_material') {
+        const catItem = this.data.rawMaterialsCatalog?.find(c => c.name === itemName);
+        if (catItem) {
+          item.unit = catItem.unit;
+          if (catItem.minThreshold !== undefined) {
+            item.minThreshold = catItem.minThreshold;
+          }
+        }
+      }
     }
     
     if (!item) {
       const id = 'inv-' + Math.random().toString(36).substring(2, 9);
+      let catUnit = 'pcs';
+      let catThreshold: number | undefined = undefined;
+      if (type === 'raw_material') {
+        const catItem = this.data.rawMaterialsCatalog?.find(c => c.name === itemName);
+        if (catItem) {
+          catUnit = catItem.unit;
+          catThreshold = catItem.minThreshold;
+        }
+      }
+
       item = {
         id,
         name: itemName,
@@ -886,7 +923,8 @@ export class DBStore {
         sku,
         quantity: 0,
         factory,
-        unit: type === 'finished_good' ? 'pcs' : 'pcs', // default unit
+        unit: type === 'finished_good' ? 'pcs' : catUnit,
+        minThreshold: type === 'raw_material' ? catThreshold : undefined,
         isPacked: type === 'finished_good' ? (isPacked !== undefined ? isPacked : true) : undefined,
         orderId: type === 'finished_good' ? refId : undefined,
         orderNumber: type === 'finished_good' ? orderNumber : undefined
@@ -927,8 +965,8 @@ export class DBStore {
     // Check low stock threshold for raw materials
     if (type === 'raw_material' && item.minThreshold !== undefined && item.quantity < item.minThreshold) {
       this.addNotification('warning',
-        `Низкий остаток сырья: "${itemName}" на заводе ${factory === 'Keles' ? 'Келес' : 'Юнусобод'} (${item.quantity} ${item.unit} остаток, порог ${item.minThreshold} ${item.unit}).`,
-        `Xom-ashyo qoldig'i kam: ${factory === 'Keles' ? 'Keles' : 'Yunusobod'} zavodida "${itemName}" (qoldiq ${item.quantity} ${item.unit}, chegara ${item.minThreshold} ${item.unit}).`
+        `Низкий остаток сырья: "${itemName}" на заводе Келес (${item.quantity} ${item.unit} остаток, порог ${item.minThreshold} ${item.unit}).`,
+        `Xom-ashyo qoldig'i kam: Keles zavodida "${itemName}" (qoldiq ${item.quantity} ${item.unit}, chegara ${item.minThreshold} ${item.unit}).`
       );
     }
 
@@ -974,8 +1012,8 @@ export class DBStore {
     // Check low stock threshold for raw materials
     if (updated.type === 'raw_material' && updated.minThreshold !== undefined && updated.quantity < updated.minThreshold) {
       this.addNotification('warning',
-        `Низкий остаток сырья: "${updated.name}" на заводе ${updated.factory === 'Keles' ? 'Келес' : 'Юнусобод'} (${updated.quantity} ${updated.unit} остаток, порог ${updated.minThreshold} ${updated.unit}).`,
-        `Xom-ashyo qoldig'i kam: ${updated.factory === 'Keles' ? 'Keles' : 'Yunusobod'} zavodida "${updated.name}" (qoldiq ${updated.quantity} ${updated.unit}, chegara ${updated.minThreshold} ${updated.unit}).`
+        `Низкий остаток сырья: "${updated.name}" на заводе Келес (${updated.quantity} ${updated.unit} остаток, порог ${updated.minThreshold} ${updated.unit}).`,
+        `Xom-ashyo qoldig'i kam: Keles zavodida "${updated.name}" (qoldiq ${updated.quantity} ${updated.unit}, chegara ${updated.minThreshold} ${updated.unit}).`
       );
     }
 

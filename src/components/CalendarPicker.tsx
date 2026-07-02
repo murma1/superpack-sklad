@@ -266,10 +266,6 @@ export default function CalendarPicker({
           <span className="w-2 h-2 rounded-full bg-indigo-500" />
           <span>{language === 'ru' ? 'Завод Келес' : 'Keles zavodi'}</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span>{language === 'ru' ? 'Завод Юнусобод' : 'Yunusobod'}</span>
-        </div>
       </div>
 
       {/* Display Clicked Day Schedule Details */}
@@ -287,7 +283,7 @@ export default function CalendarPicker({
                   <span className="text-indigo-400">{ord.quantityOrdered.toLocaleString()} шт</span>
                 </div>
                 <div className="flex justify-between text-slate-500 font-medium text-[10px] mt-0.5">
-                  <span>Завод: {language === 'ru' ? ord.factory === 'Keles' ? 'Келес' : 'Юнусобод' : ord.factory}</span>
+                  <span>Завод: {language === 'ru' ? 'Келес' : 'Keles'}</span>
                   <span>Статус: {ord.status}</span>
                 </div>
               </div>

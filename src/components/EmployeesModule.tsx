@@ -21,7 +21,8 @@ export default function EmployeesModule() {
     username: '',
     name: '',
     role: 'production' as UserRole,
-    language: 'ru' as 'ru' | 'uz'
+    language: 'ru' as 'ru' | 'uz',
+    password: ''
   });
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +42,8 @@ export default function EmployeesModule() {
       username: '',
       name: '',
       role: 'production',
-      language: 'ru'
+      language: 'ru',
+      password: ''
     });
     setFormError('');
     setIsModalOpen(true);
@@ -53,7 +55,8 @@ export default function EmployeesModule() {
       username: emp.username,
       name: emp.name,
       role: emp.role,
-      language: emp.language || 'ru'
+      language: emp.language || 'ru',
+      password: emp.password || ''
     });
     setFormError('');
     setIsModalOpen(true);
@@ -215,7 +218,11 @@ export default function EmployeesModule() {
 
                     {/* Username */}
                     <td className="py-4 px-5 font-mono text-xs text-slate-300">
-                      @{emp.username}
+                      <div>@{emp.username}</div>
+                      <div className="text-[10px] text-slate-500 font-semibold mt-1 flex items-center gap-1">
+                        <Key className="w-3 h-3 text-slate-600" />
+                        <span>{language === 'ru' ? 'Пароль' : 'Parol'}: {emp.password || '123'}</span>
+                      </div>
                     </td>
 
                     {/* Role Badge */}
@@ -343,6 +350,21 @@ export default function EmployeesModule() {
                   placeholder={t.employeesModule.usernamePlaceholder}
                   className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors font-mono"
                   required
+                />
+              </div>
+
+              {/* Password */}
+              <div className="flex flex-col gap-1.5" id="employee-password-field-container">
+                <label className="text-xs font-bold text-slate-400">
+                  {language === 'ru' ? 'Пароль (опционально)' : 'Parol (ixtiyoriy)'}
+                </label>
+                <input
+                  type="text"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleFormChange}
+                  placeholder={language === 'ru' ? 'Введите пароль (по умолчанию 123)' : 'Parolni kiriting (standart 123)'}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors"
                 />
               </div>
 

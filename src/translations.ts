@@ -28,7 +28,6 @@ export const translations = {
     langUz: 'O\'zbekcha',
     factories: {
       Keles: 'Келес',
-      Yunusobod: 'Юнусобод',
     },
     factoryLabel: 'Завод',
     notifications: 'Уведомления',
@@ -272,7 +271,7 @@ export const translations = {
       formTitleEdit: 'Редактирование данных сотрудника',
       usernamePlaceholder: 'Например: ivan_p',
       namePlaceholder: 'Например: Иванов Иван',
-      passwordHelp: 'Пароль по умолчанию для всех новых сотрудников: 123',
+      passwordHelp: 'Пароль по умолчанию 123 (вы можете ввести любой свой пароль)',
       save: 'Сохранить',
       cancel: 'Отмена',
       errorFill: 'Пожалуйста, заполните все обязательные поля',
@@ -303,7 +302,6 @@ export const translations = {
     langUz: 'O\'zbekcha',
     factories: {
       Keles: 'Keles',
-      Yunusobod: 'Yunusobod',
     },
     factoryLabel: 'Zavod',
     notifications: 'Bildirishnomalar',
@@ -547,7 +545,7 @@ export const translations = {
       formTitleEdit: 'Xodim ma\'lumotlarini tahrirlash',
       usernamePlaceholder: 'Masalan: ivan_p',
       namePlaceholder: 'Masalan: Ivanov Ivan',
-      passwordHelp: 'Barcha yangi xodimlar uchun standart parol: 123',
+      passwordHelp: 'Standart parol 123 (o\'zingizning parolingizni kiritishingiz mumkin)',
       save: 'Saqlash',
       cancel: 'Bekor qilish',
       errorFill: 'Iltimos, barcha majburiy maydonlarni to\'ldiring',

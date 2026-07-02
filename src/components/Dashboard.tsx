@@ -164,13 +164,11 @@ export default function Dashboard() {
   // Only slice last 7 if no custom filter range is active
   const displayTimelineData = (appliedStartDate || appliedEndDate) ? timelineData : timelineData.slice(-7);
 
-  // --- Chart 2: Factory comparison (Keles vs Yunusobod) ---
+  // --- Chart 2: Factory comparison (Keles) ---
   const kelesProd = filteredOrders.filter(o => o.factory === 'Keles').reduce((sum, o) => sum + o.produced, 0);
-  const yunusProd = filteredOrders.filter(o => o.factory === 'Yunusobod').reduce((sum, o) => sum + o.produced, 0);
 
   const factoryData = [
-    { name: language === 'ru' ? 'Келес' : 'Keles', value: kelesProd },
-    { name: language === 'ru' ? 'Юнусобод' : 'Yunusobod', value: yunusProd }
+    { name: language === 'ru' ? 'Келес' : 'Keles', value: kelesProd }
   ];
 
   // --- Chart 3: Top 5 products ---
