@@ -23,7 +23,7 @@ export default function ProductionModule() {
   const [statusFilter, setStatusFilter] = useState<'All' | 'New' | 'InProduction' | 'Completed'>('All');
 
   // Checkpoint Form Fields
-  const [cpProduced, setCpProduced] = useState('');
+  const [cpProduced, setCpProduced] = useState('3360');
   const [cpDefective, setCpDefective] = useState('0');
   const [cpShift, setCpShift] = useState('day');
   const [cpEquipment, setCpEquipment] = useState('AM8320 Bottomer');
@@ -60,7 +60,7 @@ export default function ProductionModule() {
       setCpDate(getGMT5DateString());
       
       // Reset form entries
-      setCpProduced('');
+      setCpProduced('3360');
       setCpDefective('0');
       setCpComment('');
       setCpRawMaterials([]);

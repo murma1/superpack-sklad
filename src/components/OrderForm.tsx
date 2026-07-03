@@ -27,7 +27,7 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
   const [productSku, setProductSku] = useState('');
   const [quantity, setQuantity] = useState('');
   const [factory, setFactory] = useState<'Keles'>('Keles');
-  const [unitsPerPallet, setUnitsPerPallet] = useState('');
+  const [unitsPerPallet, setUnitsPerPallet] = useState('3360');
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -47,22 +47,17 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
       // Create random order number
       const num = 'PO-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
       setOrderNum(num);
+      setUnitsPerPallet('3360');
     }
   }, [order]);
 
   // Sync unitsPerPallet when productSku changes (if creating or not specified)
   useEffect(() => {
-    if (!order && productSku) {
-      const selectedProd = products.find(p => p.sku === productSku);
-      if (selectedProd && selectedProd.unitsPerPallet > 0) {
-        setUnitsPerPallet(selectedProd.unitsPerPallet.toString());
-      } else {
-        setUnitsPerPallet('360');
-      }
-    } else if (!order && !productSku) {
-      setUnitsPerPallet('360');
+    if (!order) {
+      // For any new order, default to '3360' as requested
+      setUnitsPerPallet('3360');
     }
-  }, [productSku, products, order]);
+  }, [productSku, order]);
 
   // Handle auto order code change
   const handleAutoNumToggle = (val: boolean) => {
@@ -279,7 +274,7 @@ export default function OrderForm({ order, onClose }: OrderFormProps) {
               min={1}
               value={unitsPerPallet}
               onChange={(e) => setUnitsPerPallet(e.target.value)}
-              placeholder="360"
+              placeholder="3360"
               className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
